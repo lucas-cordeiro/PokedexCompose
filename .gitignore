@@ -91,3 +91,4 @@ lint/tmp/
 .idea/inspectionProfiles/Project_Default.xml
 .idea/jarRepositories.xml
 .idea/misc.xml
+.idea/modules/data/Pokedex_Compose.data.iml~
