@@ -11,18 +11,16 @@ import kotlinx.coroutines.flow.*
 class GetPokemonUseCaseImpl(
     private val pokemonRepository: PokemonRepository,
     private val errorHandler: ErrorHandler
-) : GetPokemonUseCase{
+) : GetPokemonUseCase {
     override fun doGetPokemon(): Flow<Result<List<Pokemon>>> {
         return pokemonRepository
             .doGetPokemonFromDatabase()
             .onStart {
                 val lastCacheUpdate = pokemonRepository.doGetLastCacheUpdate()
                 val currentTime = pokemonRepository.doGetCurrentTime()
-                if(currentTime - lastCacheUpdate > CACHE_DURATION){
-                    val dataFromNetwork = pokemonRepository.doGetPokemonFromNetwork().firstOrNull()
-                    dataFromNetwork?.let {
-                        pokemonRepository.doInsertPokemonDatabase(it)
-                    }
+                if (currentTime - lastCacheUpdate > CACHE_DURATION) {
+                    val dataFromNetwork = pokemonRepository.doGetPokemonFromNetwork()
+                    pokemonRepository.doInsertPokemonDatabase(dataFromNetwork)
                     pokemonRepository.doUpdateLastCacheUpdate(currentTime)
                 }
             }
@@ -30,6 +28,7 @@ class GetPokemonUseCaseImpl(
                 Result.Success(it)
             }
             .catch {
+                it.printStackTrace()
                 Result.Error<ErrorEntity>(errorHandler.getError(it))
             }
 
