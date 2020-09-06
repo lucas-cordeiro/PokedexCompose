@@ -12,7 +12,7 @@ class FakePokemonRepository : PokemonRepository {
     private var lastCacheUpdate = 0L
 
     private val pokemonDatabase = MutableStateFlow<List<Pokemon>>(listOf())
-    private val pokemonNetWork = MutableStateFlow(doGetFakeDataNetwork())
+    private val pokemonNetWork = doGetFakeDataNetwork()
 
     override suspend fun doGetCurrentTime(): Long {
         return fakeTime
@@ -23,7 +23,7 @@ class FakePokemonRepository : PokemonRepository {
     }
 
     override fun doGetPokemonFromDatabase() = pokemonDatabase
-    override fun doGetPokemonFromNetwork() = pokemonNetWork
+    override suspend fun doGetPokemonFromNetwork() = pokemonNetWork
 
     override suspend fun doInsertPokemonDatabase(list: List<Pokemon>) {
         pokemonDatabase.value = list

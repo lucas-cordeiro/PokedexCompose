@@ -13,19 +13,28 @@ import androidx.ui.tooling.preview.Preview
 import br.com.lucascordeiro.pokedex.compose.ui.PokedexComposeTheme
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
-import org.koin.core.KoinComponent
 
-class MainActivity : AppCompatActivity(), KoinComponent {
+class MainActivity : AppCompatActivity() {
 
     private val getPokemonUseCase by inject<GetPokemonUseCase>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launchWhenCreated {
-            getPokemonUseCase.doGetPokemon().collect {
-
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO){
+                getPokemonUseCase.doGetPokemon().collect {
+                    when(it){
+                        is Result.Success -> {
+                            val bulbasaur = it.data.firstOrNull()
+                            Log.d("DEBUG", "${bulbasaur?.name}(${bulbasaur?.type?.first()?.name}): ${bulbasaur?.imageUrl}")
+                        }
+                    }
+                }
             }
         }
         setContent {

@@ -7,19 +7,19 @@ fun doGetFakeDataNetwork() = listOf(
     Pokemon(
         id = 1,
         name = "Bulbasaur",
-        type = PokemonType("Grass"),
+        type = listOf(PokemonType.valueOf("GRASS")),
         imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
     ),
     Pokemon(
         id = 4,
         name = "Charmander",
-        type = PokemonType("Fire"),
+        type = listOf(PokemonType.valueOf("FIRE")),
         imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"
     ),
     Pokemon(
         id = 7,
         name = "Squirtle",
-        type = PokemonType("Water"),
+        type =listOf(PokemonType.valueOf("WATER")),
         imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
     )
 )
