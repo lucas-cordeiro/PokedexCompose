@@ -1,0 +1,3 @@
+rootProject.name = "Pokedex Compose"
+include ':app'
+include ':domain'
