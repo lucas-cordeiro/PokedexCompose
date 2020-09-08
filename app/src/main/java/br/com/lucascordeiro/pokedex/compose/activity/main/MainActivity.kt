@@ -1,7 +1,8 @@
-package br.com.lucascordeiro.pokedex.compose
+package br.com.lucascordeiro.pokedex.compose.activity.main
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Text
 import androidx.compose.material.MaterialTheme
@@ -15,34 +16,25 @@ import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
 
-    private val getPokemonUseCase by inject<GetPokemonUseCase>()
+    private val viewModel: MainViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO){
-                getPokemonUseCase.doGetPokemon().collect {
-                    when(it){
-                        is Result.Success -> {
-                            val bulbasaur = it.data.firstOrNull()
-                            Log.d("DEBUG", "${bulbasaur?.name}(${bulbasaur?.type?.first()?.name}): ${bulbasaur?.imageUrl}")
-                        }
-                    }
-                }
-            }
-        }
         setContent {
             PokedexComposeTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
-                }
+                MainScreen(pokemons = viewModel.pokemons)
+            }
+        }
+        lifecycleScope.launchWhenCreated {
+            viewModel.errorMessage.filter { it!=null }.collect {error ->
+                Toast.makeText(this@MainActivity, error!!, Toast.LENGTH_LONG).show()
             }
         }
     }

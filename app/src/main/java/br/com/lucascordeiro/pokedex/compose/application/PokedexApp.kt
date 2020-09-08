@@ -20,6 +20,7 @@ class PokedexApp : Application() {
             useCaseModule,
             mapperModule,
             databaseModule,
-            sharedPreferenceModule
+            sharedPreferenceModule,
+            viewModelModule
     )
 }
