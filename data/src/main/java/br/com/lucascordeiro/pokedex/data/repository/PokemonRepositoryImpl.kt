@@ -10,6 +10,7 @@ import br.com.lucascordeiro.pokedex.data.mapper.Mapper
 import br.com.lucascordeiro.pokedex.data.mapper.pokemon.PokemonMapper
 import br.com.lucascordeiro.pokedex.data.mapper.pokemon.PokemonMapperImpl
 import br.com.lucascordeiro.pokedex.data.network.service.PokemonApiClient
+import br.com.lucascordeiro.pokedex.data.preferences.PreferenceController
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
@@ -20,18 +21,19 @@ class PokemonRepositoryImpl(
     private val pokemonApiClient: PokemonApiClient,
     private val pokemonDao: PokemonDao,
     private val pokemonTypeDao: PokemonTypeDao,
-    private val pokemonMapper: PokemonMapper
+    private val pokemonMapper: PokemonMapper,
+    private val preferenceController: PreferenceController
 ) : PokemonRepository {
     override suspend fun doGetCurrentTime(): Long {
         return System.currentTimeMillis()
     }
 
     override suspend fun doGetLastCacheUpdate(): Long {
-        return 0L
+        return preferenceController.lastCacheTime
     }
 
     override suspend fun doUpdateLastCacheUpdate(time: Long) {
-
+        preferenceController.lastCacheTime = time
     }
 
     override fun doGetPokemonFromDatabase() = pokemonDao.getAll().map { it.map { pokemonEntity ->

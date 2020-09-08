@@ -5,5 +5,5 @@ import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single { PokemonRepositoryImpl(get(),get(), get(), get()) as PokemonRepository}
+    single { PokemonRepositoryImpl(get(),get(), get(), get(), get()) as PokemonRepository}
 }
