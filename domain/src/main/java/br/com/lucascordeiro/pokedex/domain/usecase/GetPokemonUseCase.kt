@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface GetPokemonUseCase {
     fun doGetPokemon() : Flow<Result<List<Pokemon>>>
+    suspend fun doRefresh()
 }

@@ -1,5 +1,6 @@
 package br.com.lucascordeiro.pokedex.compose.activity.main
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,12 +28,14 @@ class MainViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
         get() = _errorMessage
 
     init {
+        Log.d("BUG","init viewmodel")
         viewModelScope.launch(IO) {
             useCase.doGetPokemon()
                     .collect {
                         withContext(Main) {
                             when (it) {
                                 is Result.Success -> {
+                                    Log.d("BUG", "Types: ${it.data.map { it.type.first().type }}")
                                     pokemons = it.data
                                 }
                                 is Result.Error -> {
@@ -48,6 +51,10 @@ class MainViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
                             }
                         }
                     }
+        }
+
+        viewModelScope.launch(IO) {
+            useCase.doRefresh()
         }
     }
 }

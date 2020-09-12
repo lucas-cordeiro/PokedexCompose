@@ -21,7 +21,7 @@ interface PokemonDao {
     fun insert(join: PokemonCrossTypeEntity)
 
     @Transaction
-    @Query("SELECT * FROM pokemon")
-    suspend fun getPokemonWithTypeEntity(): PokemonWithTypeEntity
+    @Query("SELECT * FROM pokemoncrosstypeentity WHERE pokemonId = :pokemonId")
+    suspend fun getPokemonWithTypeEntity(pokemonId: Long): List<PokemonCrossTypeEntity>
 
 }

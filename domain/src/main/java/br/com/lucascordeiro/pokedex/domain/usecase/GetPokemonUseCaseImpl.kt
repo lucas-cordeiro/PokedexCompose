@@ -6,7 +6,9 @@ import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
 import br.com.lucascordeiro.pokedex.domain.utils.CACHE_DURATION
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.runBlocking
 
 class GetPokemonUseCaseImpl(
     private val pokemonRepository: PokemonRepository,
@@ -15,15 +17,6 @@ class GetPokemonUseCaseImpl(
     override fun doGetPokemon(): Flow<Result<List<Pokemon>>> {
         return pokemonRepository
             .doGetPokemonFromDatabase()
-            .onStart {
-                val lastCacheUpdate = pokemonRepository.doGetLastCacheUpdate()
-                val currentTime = pokemonRepository.doGetCurrentTime()
-                if (currentTime - lastCacheUpdate > CACHE_DURATION) {
-                    val dataFromNetwork = pokemonRepository.doGetPokemonFromNetwork()
-                    pokemonRepository.doInsertPokemonDatabase(dataFromNetwork)
-                    pokemonRepository.doUpdateLastCacheUpdate(currentTime)
-                }
-            }
             .map {
                 Result.Success(it)
             }
@@ -31,6 +24,15 @@ class GetPokemonUseCaseImpl(
                 it.printStackTrace()
                 Result.Error<ErrorEntity>(errorHandler.getError(it))
             }
+    }
 
+    override suspend fun doRefresh() {
+        val lastCacheUpdate = pokemonRepository.doGetLastCacheUpdate()
+        val currentTime = pokemonRepository.doGetCurrentTime()
+        if (currentTime - lastCacheUpdate > CACHE_DURATION) {
+            val dataFromNetwork = pokemonRepository.doGetPokemonFromNetwork()
+            pokemonRepository.doInsertPokemonDatabase(dataFromNetwork)
+            pokemonRepository.doUpdateLastCacheUpdate(currentTime)
+        }
     }
 }

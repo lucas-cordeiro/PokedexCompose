@@ -15,9 +15,10 @@ buildscript {
         room_version = '2.2.5'
 
         //Android
-        compose_version = '1.0.0-alpha01'
+        compose_version = '1.0.0-alpha02'
         lifecycle_version = '2.3.0-alpha07'
         koin_version = '2.1.5'
+        coil_version = '0.2.1'
 
         compileSdkVersion = 30
         targetSdkVersion = 30
@@ -28,7 +29,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.2.0-alpha09"
+        classpath 'com.android.tools.build:gradle:4.2.0-alpha10'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -42,6 +43,7 @@ allprojects {
         jcenter()
         maven { url "https://kotlin.bintray.com/kotlinx" }
         maven { url 'https://jitpack.io' }
+        mavenCentral()
     }
 }
 

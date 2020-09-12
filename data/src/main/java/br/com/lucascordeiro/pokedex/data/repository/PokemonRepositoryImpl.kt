@@ -1,5 +1,6 @@
 package br.com.lucascordeiro.pokedex.data.repository
 
+import android.util.Log
 import androidx.core.net.toUri
 import br.com.lucascordeiro.pokedex.data.database.dao.PokemonDao
 import br.com.lucascordeiro.pokedex.data.database.dao.PokemonTypeDao
@@ -37,7 +38,9 @@ class PokemonRepositoryImpl(
     }
 
     override fun doGetPokemonFromDatabase() = pokemonDao.getAll().map { it.map { pokemonEntity ->
-        val relation = pokemonDao.getPokemonWithTypeEntity().types
+        val relation = pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId).map { pokemonCrossType ->
+            pokemonTypeDao.getById(pokemonCrossType.typeId).first()
+        }
         pokemonEntity.types = relation
         pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)
     } }
