@@ -4,9 +4,11 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.viewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.ui.tooling.preview.Preview
 import br.com.lucascordeiro.pokedex.compose.di.component.PokedexComponent
-import br.com.lucascordeiro.pokedex.compose.ui.MainViewModel
 import br.com.lucascordeiro.pokedex.compose.ui.components.TopBar
 import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
@@ -17,9 +19,13 @@ import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 fun Home(
     onPokemonSelected: (Long) -> Unit,
     pokemons: List<Pokemon>? = null,
-    modifier: Modifier = Modifier,
-    viewModel: MainViewModel? = null
+    modifier: Modifier = Modifier
 ){
+    val viewModel: HomeViewModel = viewModel(null, object : ViewModelProvider.Factory{
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return HomeViewModel(PokedexComponent().useCase) as T
+        }
+    })
     Scaffold(
         topBar = {
             TopBar(title = "Pokedex")
@@ -28,9 +34,7 @@ fun Home(
         pokemons?.let {
             PokemonCollection(modifier = modifier,pokemons = it, onPokemonSelected = onPokemonSelected)
         }?: run {
-            if(viewModel!=null){
-                PokemonCollection(pokemons = viewModel.pokemons, onPokemonSelected = onPokemonSelected)
-            }
+            PokemonCollection(pokemons = viewModel.pokemons, onPokemonSelected = onPokemonSelected)
         }
     }
 }

@@ -13,18 +13,11 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: MainViewModel by viewModel()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PokedexComposeTheme {
-               PokedexApp(backPressedDispatcher = onBackPressedDispatcher, viewModel = viewModel)
-            }
-        }
-        lifecycleScope.launchWhenCreated {
-            viewModel.errorMessage.filter { it!=null }.collect {error ->
-                Toast.makeText(this@MainActivity, error!!, Toast.LENGTH_LONG).show()
+               PokedexApp(backPressedDispatcher = onBackPressedDispatcher)
             }
         }
     }
