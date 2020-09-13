@@ -18,7 +18,7 @@ fun NetworkImage(
     contentScale: ContentScale = ContentScale.Crop,
     placeholderColor: Color? = MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
 ) {
-    CoilImageWithCrossfade(
+    CoilImage(
         data = url,
         modifier = modifier,
         contentScale = contentScale,

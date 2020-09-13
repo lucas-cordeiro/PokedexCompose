@@ -19,6 +19,8 @@ import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
 import br.com.lucascordeiro.pokedex.compose.ui.theme.grey800
 import br.com.lucascordeiro.pokedex.compose.ui.theme.typography
 import br.com.lucascordeiro.pokedex.compose.ui.utils.NetworkImage
+import br.com.lucascordeiro.pokedex.compose.ui.utils.SharedElement
+import br.com.lucascordeiro.pokedex.compose.ui.utils.SharedElementType
 import br.com.lucascordeiro.pokedex.compose.ui.utils.toPokemonTypeTheme
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.PokemonType
@@ -48,11 +50,13 @@ fun PokemonItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Text(
-                    text = pokemon.name.capitalize(Locale.getDefault()),
-                    style = typography.subtitle1,
-                    color = pokemonTypeTheme.colorLight
-                )
+                SharedElement(tag =  "${pokemon.id}_Text", type = SharedElementType.FROM) {
+                    Text(
+                        text = pokemon.name.capitalize(Locale.getDefault()),
+                        style = typography.subtitle1,
+                        color = pokemonTypeTheme.colorLight
+                    )
+                }
                 Column {
                     pokemon.type.forEach {
                         PokemonType(type = it.type.capitalize(Locale.getDefault()))
@@ -84,17 +88,19 @@ fun PokemonItem(
                             },
                         contentScale = ContentScale.Inside
                     )
-                    NetworkImage(
-                        url = pokemon.imageUrl,
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .preferredSize(80.dp)
-                            .constrainAs(image) {
-                                centerTo(parent)
-                            },
-                        contentScale = ContentScale.Crop,
-                        placeholderColor = grey800.copy(alpha = 0.1f)
-                    )
+                    SharedElement(tag =  "${pokemon.id}_Image", type = SharedElementType.FROM) {
+                        NetworkImage(
+                            url = pokemon.imageUrl,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .preferredSize(80.dp)
+                                .constrainAs(image) {
+                                    centerTo(parent)
+                                },
+                            contentScale = ContentScale.Crop,
+                            placeholderColor = grey800.copy(alpha = 0.1f)
+                        )
+                    }
                 }
             }
         }

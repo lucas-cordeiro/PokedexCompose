@@ -10,6 +10,7 @@ import br.com.lucascordeiro.pokedex.compose.ui.home.Home
 import br.com.lucascordeiro.pokedex.compose.ui.pokedetail.PokemonDetail
 import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
 import br.com.lucascordeiro.pokedex.compose.ui.utils.Navigator
+import br.com.lucascordeiro.pokedex.compose.ui.utils.SharedElementsRoot
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 
 @Composable
@@ -21,10 +22,12 @@ fun PokedexApp(backPressedDispatcher: OnBackPressedDispatcher){
 
     val actions = remember(navigator) { Actions(navigator) }
     PokedexComposeTheme {
-        Crossfade(navigator.current) {destination ->  
-            when(destination){
-                Destination.Home -> Home(onPokemonSelected = actions.selectPokemon)
-                is Destination.PokemonDetail -> PokemonDetail(pokemonId = destination.pokemonId, upPress = actions.upPress)
+        SharedElementsRoot {
+            Crossfade(navigator.current) {destination ->
+                when(destination){
+                    Destination.Home -> Home(onPokemonSelected = actions.selectPokemon)
+                    is Destination.PokemonDetail -> PokemonDetail(pokemonId = destination.pokemonId, upPress = actions.upPress)
+                }
             }
         }
     }
