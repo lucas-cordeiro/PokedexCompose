@@ -15,6 +15,7 @@ import br.com.lucascordeiro.pokedex.data.preferences.PreferenceController
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
@@ -44,6 +45,15 @@ class PokemonRepositoryImpl(
         pokemonEntity.types = relation
         pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)
     } }
+
+    override fun doGetPokemonByIdFromDatabase(pokemonId: Long) = pokemonDao.getById(pokemonId)
+        .map { pokemonEntity ->
+            val relation = pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId).map { pokemonCrossType ->
+                pokemonTypeDao.getById(pokemonCrossType.typeId).first()
+            }
+            pokemonEntity.types = relation
+            pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)
+        }
 
     override suspend fun doGetPokemonFromNetwork() : List<Pokemon> {
         val response = pokemonApiClient.doGetPokemon().results.orEmpty()

@@ -1,4 +1,4 @@
-package br.com.lucascordeiro.pokedex.compose.utils
+package br.com.lucascordeiro.pokedex.compose.ui.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer

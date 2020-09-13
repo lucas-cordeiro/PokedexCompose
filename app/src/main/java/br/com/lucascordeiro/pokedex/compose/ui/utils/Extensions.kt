@@ -1,8 +1,7 @@
-package br.com.lucascordeiro.pokedex.compose.utils
+package br.com.lucascordeiro.pokedex.compose.ui.utils
 
-import android.util.Log
 import br.com.lucascordeiro.pokedex.compose.helper.PokemonTypeTheme
-import br.com.lucascordeiro.pokedex.compose.ui.*
+import br.com.lucascordeiro.pokedex.compose.ui.theme.*
 import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 import br.com.lucascordeiro.pokedex.domain.utils.*
 

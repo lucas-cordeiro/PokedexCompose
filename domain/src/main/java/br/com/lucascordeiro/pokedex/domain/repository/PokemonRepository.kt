@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface PokemonRepository {
     suspend fun doGetPokemonFromNetwork() : List<Pokemon>
     fun doGetPokemonFromDatabase() : Flow<List<Pokemon>>
+    fun doGetPokemonByIdFromDatabase(pokemonId: Long) : Flow<Pokemon>
     suspend fun doGetLastCacheUpdate() : Long
     suspend fun doGetCurrentTime() : Long
     suspend fun doUpdateLastCacheUpdate(time: Long)

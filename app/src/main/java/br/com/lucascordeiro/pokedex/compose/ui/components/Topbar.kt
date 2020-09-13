@@ -1,12 +1,11 @@
-package br.com.lucascordeiro.pokedex.compose.activity.main
+package br.com.lucascordeiro.pokedex.compose.ui.components
 
 import androidx.compose.foundation.Text
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.ui.tooling.preview.Preview
-import br.com.lucascordeiro.pokedex.compose.ui.PokedexComposeTheme
+import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
 
 @Composable
 fun TopBar(

@@ -12,6 +12,9 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon")
     fun getAll() : Flow<List<PokemonEntity>>
 
+    @Query("SELECT * FROM pokemon WHERE pokemonId = :pokemonId")
+    fun getById(pokemonId: Long) : Flow<PokemonEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(list: List<PokemonEntity>)
 

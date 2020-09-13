@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
 }
 
 java {
@@ -93,6 +94,9 @@ dependencies {
 
     //ComposeUtils
     implementation "dev.chrisbanes.accompanist:accompanist-coil:$coil_version"
+
+    //Router
+    implementation "com.github.zsoltk:compose-router:$router_version"
 
     //Test
     testImplementation "junit:junit:$junit_version"

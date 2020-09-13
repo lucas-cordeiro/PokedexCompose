@@ -19,6 +19,7 @@ buildscript {
         lifecycle_version = '2.3.0-alpha07'
         koin_version = '2.1.5'
         coil_version = '0.2.1'
+        router_version = '0.18.0'
 
         compileSdkVersion = 30
         targetSdkVersion = 30

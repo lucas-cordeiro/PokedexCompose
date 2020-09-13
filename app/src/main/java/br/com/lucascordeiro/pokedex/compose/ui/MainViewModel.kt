@@ -1,4 +1,4 @@
-package br.com.lucascordeiro.pokedex.compose.activity.main
+package br.com.lucascordeiro.pokedex.compose.ui
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -15,7 +15,6 @@ import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
@@ -26,6 +25,24 @@ class MainViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
     private val _errorMessage: MutableStateFlow<String?> = MutableStateFlow(null)
     val errorMessage: StateFlow<String?>
         get() = _errorMessage
+
+    var pokemon: Pokemon? by mutableStateOf(null)
+        private set
+
+    fun getPokemonId(pokemonId: Long){
+        viewModelScope.launch(IO) {
+            useCase.doGetPokemonById(pokemonId = pokemonId)
+                .collect {
+                    withContext(Main){
+                        when(it){
+                            is Result.Success -> {
+                                pokemon = it.data
+                            }
+                        }
+                    }
+                }
+        }
+    }
 
     init {
         Log.d("BUG","init viewmodel")

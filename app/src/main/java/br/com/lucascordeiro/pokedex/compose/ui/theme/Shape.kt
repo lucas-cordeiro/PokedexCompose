@@ -1,4 +1,4 @@
-package br.com.lucascordeiro.pokedex.compose.ui
+package br.com.lucascordeiro.pokedex.compose.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

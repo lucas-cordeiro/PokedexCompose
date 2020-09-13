@@ -26,6 +26,18 @@ class GetPokemonUseCaseImpl(
             }
     }
 
+    override fun doGetPokemonById(pokemonId: Long): Flow<Result<Pokemon>> {
+        return pokemonRepository
+            .doGetPokemonByIdFromDatabase(pokemonId)
+            .map {
+                Result.Success(it)
+            }
+            .catch {
+                it.printStackTrace()
+                Result.Error<ErrorEntity>(errorHandler.getError(it))
+            }
+    }
+
     override suspend fun doRefresh() {
         val lastCacheUpdate = pokemonRepository.doGetLastCacheUpdate()
         val currentTime = pokemonRepository.doGetCurrentTime()
