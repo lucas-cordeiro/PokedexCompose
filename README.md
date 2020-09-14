@@ -53,7 +53,7 @@ Project developed for studies using the pokemon public api
 
 - [flutter_pokedex](https://github.com/scitbiz/flutter_pokedex/) by **Pham Sy Hung**
 - [Kotlin-Pokedex](https://github.com/mrcsxsiq/Kotlin-Pokedex) by **Marcos Paulo Farias**
-- [compose-pokedex](https://raw.githubusercontent.com/zsoltk/compose-pokedex) by **Zsolt Kocsi**
+- [compose-pokedex](https://github.com/zsoltk/compose-pokedex) by **Zsolt Kocsi**
 
 ### Built With
 * [Jetpack Compose](https://developer.android.com/jetpack/compose?hl=pt-br)
