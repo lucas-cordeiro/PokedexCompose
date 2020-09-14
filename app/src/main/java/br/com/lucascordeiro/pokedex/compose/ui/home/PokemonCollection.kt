@@ -40,16 +40,19 @@ import kotlinx.coroutines.flow.flowOf
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
-
 @Composable
 fun PokemonCollection(
-    onPokemonSelected: (Long) -> Unit,
+    onPokemonSelected: (Pokemon) -> Unit,
+    scrollPosition: () -> Float,
+    setScrollPosition: (Float) -> Unit,
     pokemons: List<Pokemon>,
     loadMoreItems: () -> Unit,
     loading: Boolean,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+
+    scrollState.scrollTo(scrollPosition())
 
     Stack() {
         ScrollableColumn(
@@ -62,6 +65,8 @@ fun PokemonCollection(
             ) {
                 pokemons.forEach { pokemon ->
                     PokemonItem(
+                        scrollState = scrollState,
+                        setPosition = setScrollPosition,
                         onPokemonSelected = onPokemonSelected,
                         modifier = modifier,
                         pokemon = pokemon
@@ -70,7 +75,10 @@ fun PokemonCollection(
             }
 
             Button(
-                onClick = loadMoreItems,
+                onClick = {
+                    setScrollPosition(scrollState.value)
+                    loadMoreItems()
+                },
                 modifier = Modifier
                     .padding(0.dp, 8.dp)
                     .drawOpacity(if (loading) 0f else 1f),
@@ -186,7 +194,7 @@ private fun shortestColumn(colHeights: IntArray): Int {
 fun PreviewPokemonList(){
     PokedexComposeTheme(darkTheme = true) {
         Surface(contentColor = contentColor()) {
-            PokemonCollection(pokemons = remember { generateList() }, onPokemonSelected = {}, loadMoreItems = {}, loading = false)
+            PokemonCollection(setScrollPosition = {},scrollPosition = {1f}, pokemons = remember { generateList() }, onPokemonSelected = {}, loadMoreItems = {}, loading = false)
         }
     }
 }

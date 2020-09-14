@@ -1,9 +1,8 @@
 package br.com.lucascordeiro.pokedex.compose.ui.pokedetail
 
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -25,11 +24,12 @@ import br.com.lucascordeiro.pokedex.compose.ui.utils.NetworkImage
 import br.com.lucascordeiro.pokedex.compose.ui.utils.SharedElement
 import br.com.lucascordeiro.pokedex.compose.ui.utils.SharedElementType
 import br.com.lucascordeiro.pokedex.compose.ui.utils.toPokemonTypeTheme
+import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import java.util.*
 
 @Composable
 fun PokemonDetail(
-    pokemonId: Long,
+    pokemonBasic: Pokemon,
     upPress: () -> Unit
 ){
     val viewModel: PokeDetailViewModel = viewModel(null, object : ViewModelProvider.Factory{
@@ -37,24 +37,27 @@ fun PokemonDetail(
             return PokeDetailViewModel(PokedexComponent().useCase) as T
         }
     })
-    viewModel.getPokemonId(pokemonId = pokemonId)
+    viewModel.getPokemonId(pokemonId = pokemonBasic.id)
     val pokemon = viewModel.pokemon
-    val pokemonTypeTheme = remember(pokemon?.id) { pokemon?.type?.first()?.toPokemonTypeTheme() }
-    Column {
-        SharedElement(tag = "${pokemonId}_Text", type = SharedElementType.TO) {
+    val pokemonTypeTheme = remember(pokemonBasic.id) { pokemonBasic.type.first().toPokemonTypeTheme() }
+    Column(
+        modifier = Modifier.fillMaxSize(1f)
+    ) {
+        SharedElement(tag = "${pokemonBasic.id}_Text", type = SharedElementType.TO) {
             Text(
-                text = pokemon?.name?.capitalize(Locale.getDefault())?:"",
+                text =pokemonBasic.name.capitalize(Locale.getDefault()),
                 style = typography.h5,
-                color = pokemonTypeTheme?.colorLight?:MaterialTheme.colors.onSurface,
-                modifier = Modifier.preferredWidth(200.dp)
+                color = pokemonTypeTheme.colorLight,
+                modifier = Modifier.wrapContentWidth()
             )
         }
-        SharedElement(tag = "${pokemonId}_Image", type = SharedElementType.TO) {
+        SharedElement(tag = "${pokemonBasic.id}_Image", type = SharedElementType.TO) {
             NetworkImage(
-                url = pokemon?.imageUrl?:"",
+                url = pokemon?.imageUrl ?: "",
                 modifier = Modifier
                     .clip(CircleShape)
-                    .preferredSize(200.dp),
+                    .preferredSize(200.dp)
+                    .clickable(onClick = upPress),
                 contentScale = ContentScale.Crop,
                 placeholderColor = null
             )

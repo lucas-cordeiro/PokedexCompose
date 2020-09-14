@@ -30,7 +30,9 @@ import java.util.*
 
 @Composable
 fun PokemonItem(
-    onPokemonSelected: (Long) -> Unit,
+    scrollState: ScrollState,
+    setPosition: (Float) -> Unit,
+    onPokemonSelected: (Pokemon) -> Unit,
     pokemon: Pokemon,
     modifier: Modifier = Modifier
 ) {
@@ -41,7 +43,8 @@ fun PokemonItem(
             .preferredWidth(220.dp)
             .clip(RoundedCornerShape(10.dp))
             .clickable(onClick = {
-                onPokemonSelected(pokemon.id)
+                setPosition(scrollState.value)
+                onPokemonSelected(pokemon)
             })
     ) {
         Row(
@@ -156,7 +159,12 @@ fun PreviewPokemon(){
                     type = listOf(PokemonType.FIRE)
                 )
             }
-            PokemonItem(pokemon = pokemon, onPokemonSelected = {})
+            PokemonItem(
+                pokemon = pokemon,
+                onPokemonSelected = {},
+                scrollState = rememberScrollState(),
+                setPosition = {}
+            )
         }
     }
 }

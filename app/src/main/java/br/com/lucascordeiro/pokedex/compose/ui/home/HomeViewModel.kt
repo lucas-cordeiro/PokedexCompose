@@ -26,11 +26,18 @@ class HomeViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
     var loading: Boolean by mutableStateOf(false)
         private set
 
+    var scrollPosition: Float by mutableStateOf(0f)
+        private set
+
     private val _errorMessage: MutableStateFlow<String?> = MutableStateFlow(null)
     val errorMessage: StateFlow<String?>
         get() = _errorMessage
 
     private var loadingMoreItems = false
+
+    fun addScrollPosition(position: Float){
+        scrollPosition = position
+    }
 
     fun loadMoreItems(count: Long){
         if(!loadingMoreItems) {

@@ -5,10 +5,7 @@ import android.view.Choreographer
 import androidx.annotation.Px
 import androidx.compose.animation.OffsetPropKey
 import androidx.compose.animation.PxPropKey
-import androidx.compose.animation.core.FloatPropKey
-import androidx.compose.animation.core.TransitionState
-import androidx.compose.animation.core.transitionDefinition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Box
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.offset
@@ -367,7 +364,10 @@ private sealed class SharedElementTransition(val startElement: PositionedSharedE
                 sequenceOf(startElementPropKeys, endElementPropKeys).flatMap {
                     sequenceOf(it.position, it.scaleX, it.scaleY, it.alpha)
                 }.forEach { key ->
-                    key using tween( durationMillis = (1000 / 3f).roundToInt())
+                    key using tween(
+                        durationMillis = (3000 / 3f).roundToInt(),
+                        easing = FastOutSlowInEasing
+                    )
                 }
             }
         }

@@ -3,7 +3,9 @@ package br.com.lucascordeiro.pokedex.compose.ui
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import br.com.lucascordeiro.pokedex.compose.ui.utils.Navigator
+import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.RawValue
 
 /**
  * Models the screens in the app and any arguments they require.
@@ -14,7 +16,7 @@ sealed class Destination : Parcelable {
 
     @Immutable
     @Parcelize
-    data class PokemonDetail(val pokemonId: Long) : Destination()
+    data class PokemonDetail(val pokemonBasic:@RawValue Pokemon) : Destination()
 }
 
 
@@ -22,8 +24,8 @@ sealed class Destination : Parcelable {
  * Models the navigation actions in the app.
  */
 class Actions(navigator: Navigator<Destination>) {
-    val selectPokemon: (Long) -> Unit = { pokemonId: Long ->
-        navigator.navigate(Destination.PokemonDetail(pokemonId))
+    val selectPokemon: (Pokemon) -> Unit = { pokemonBasic: Pokemon ->
+        navigator.navigate(Destination.PokemonDetail(pokemonBasic))
     }
     val upPress: () -> Unit = {
         navigator.back()

@@ -18,7 +18,7 @@ import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
 
 @Composable
 fun Home(
-    onPokemonSelected: (Long) -> Unit,
+    onPokemonSelected: (Pokemon) -> Unit,
     pokemons: List<Pokemon>? = null,
     modifier: Modifier = Modifier
 ){
@@ -33,11 +33,17 @@ fun Home(
         }
     ) {
         pokemons?.let {
-            PokemonCollection(modifier = modifier,pokemons = it, onPokemonSelected = onPokemonSelected, loadMoreItems = {}, loading = false)
+            PokemonCollection(modifier = modifier,pokemons = it, onPokemonSelected = onPokemonSelected, loadMoreItems = {}, loading = false, scrollPosition = {0f}, setScrollPosition = {})
         }?: run {
             PokemonCollection(
                 pokemons = viewModel.pokemons,
                 loading = viewModel.loading,
+                scrollPosition = {
+                    viewModel.scrollPosition
+                },
+                setScrollPosition = {
+                    viewModel.addScrollPosition(it)
+                },
                 onPokemonSelected = onPokemonSelected,
                 loadMoreItems = {
                     viewModel.loadMoreItems(DEFAULT_LIMIT)
