@@ -24,7 +24,7 @@
 
 ## Screenshots
 
-![](https://imgur.com/GxAPp3r.png)
+![](https://i.imgur.com/p5fm2yM.png)
 
 
 <!-- TABLE OF CONTENTS -->
