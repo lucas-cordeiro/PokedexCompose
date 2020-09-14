@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PokemonDao {
 
-    @Query("SELECT * FROM pokemon")
-    fun getAll() : Flow<List<PokemonEntity>>
+    @Query("SELECT * FROM pokemon ORDER BY pokemonId LIMIT :limit OFFSET :offset")
+    fun getAll(limit: Long, offset: Long) : Flow<List<PokemonEntity>>
 
     @Query("SELECT * FROM pokemon WHERE pokemonId = :pokemonId")
     fun getById(pokemonId: Long) : Flow<PokemonEntity>

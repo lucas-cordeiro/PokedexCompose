@@ -10,7 +10,9 @@ val databaseModule = module {
             get(),
             AppDatabase::class.java,
             "br.com.lucas.cordeiro.pokedex.compose.database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
     single { get<AppDatabase>().pokemonDao() }
     single { get<AppDatabase>().pokemonTypeDao() }

@@ -4,8 +4,8 @@ import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import kotlinx.coroutines.flow.Flow
 
 interface PokemonRepository {
-    suspend fun doGetPokemonFromNetwork() : List<Pokemon>
-    fun doGetPokemonFromDatabase() : Flow<List<Pokemon>>
+    suspend fun doGetPokemonFromNetwork(limit: Long, offset: Long) : List<Pokemon>
+    fun doGetPokemonFromDatabase(limit: Long, offset: Long) : Flow<List<Pokemon>>
     fun doGetPokemonByIdFromDatabase(pokemonId: Long) : Flow<Pokemon>
     suspend fun doGetLastCacheUpdate() : Long
     suspend fun doGetCurrentTime() : Long

@@ -88,15 +88,15 @@ fun PokemonItem(
                             },
                         contentScale = ContentScale.Inside
                     )
-                    SharedElement(tag =  "${pokemon.id}_Image", type = SharedElementType.FROM) {
+                    SharedElement(tag =  "${pokemon.id}_Image", type = SharedElementType.FROM, modifier = Modifier.constrainAs(image) {
+                        centerTo(parent)
+                    }) {
                         NetworkImage(
                             url = pokemon.imageUrl,
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .preferredSize(80.dp)
-                                .constrainAs(image) {
-                                    centerTo(parent)
-                                },
+                            ,
                             contentScale = ContentScale.Crop,
                             placeholderColor = grey800.copy(alpha = 0.1f)
                         )

@@ -51,8 +51,4 @@ class PokeDetailViewModel(private val useCase: GetPokemonUseCase) : ViewModel() 
                 }
         }
     }
-
-    init {
-        Log.d("BUG","init detailviewmodel")
-    }
 }

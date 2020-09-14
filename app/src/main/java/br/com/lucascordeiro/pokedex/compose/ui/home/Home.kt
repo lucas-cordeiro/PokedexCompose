@@ -13,6 +13,7 @@ import br.com.lucascordeiro.pokedex.compose.ui.components.TopBar
 import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.PokemonType
+import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
 
 
 @Composable
@@ -32,9 +33,16 @@ fun Home(
         }
     ) {
         pokemons?.let {
-            PokemonCollection(modifier = modifier,pokemons = it, onPokemonSelected = onPokemonSelected)
+            PokemonCollection(modifier = modifier,pokemons = it, onPokemonSelected = onPokemonSelected, loadMoreItems = {}, loading = false)
         }?: run {
-            PokemonCollection(pokemons = viewModel.pokemons, onPokemonSelected = onPokemonSelected)
+            PokemonCollection(
+                pokemons = viewModel.pokemons,
+                loading = viewModel.loading,
+                onPokemonSelected = onPokemonSelected,
+                loadMoreItems = {
+                    viewModel.loadMoreItems(DEFAULT_LIMIT)
+                }
+            )
         }
     }
 }

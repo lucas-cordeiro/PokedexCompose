@@ -6,6 +6,6 @@ import br.com.lucascordeiro.pokedex.data.network.model.ResponsePokemonNetwork
 import kotlinx.coroutines.flow.Flow
 
 interface PokemonApiClient : ApiClient{
-    suspend fun doGetPokemon() : ResponsePokemonNetwork<PokemonNetwork>
+    suspend fun doGetPokemon(offset: Long, limit: Long) : ResponsePokemonNetwork<PokemonNetwork>
     suspend fun doGetPokemonById(id: Long) : PokemonNetwork
 }

@@ -5,7 +5,7 @@ import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.*
+import kotlinx.coroutines.flow.flowOf
 
 class FakePokemonRepository : PokemonRepository {
 
@@ -22,11 +22,18 @@ class FakePokemonRepository : PokemonRepository {
         return lastCacheUpdate
     }
 
-    override fun doGetPokemonFromDatabase() = pokemonDatabase
-    override suspend fun doGetPokemonFromNetwork() = pokemonNetWork
+    override fun doGetPokemonFromDatabase(limit: Long, offset: Long) : Flow<List<Pokemon>>{
+        println("doGetPokemonFromDatabase: limit: $limit offset: $offset")
+        return flowOf(pokemonDatabase.value.subList(offset.toInt(), limit.toInt()))
+    }
+    override suspend fun doGetPokemonFromNetwork(limit: Long, offset: Long) = pokemonNetWork.subList(offset.toInt(), (offset + limit).toInt())
+
+    override fun doGetPokemonByIdFromDatabase(pokemonId: Long): Flow<Pokemon>  = flowOf(pokemonDatabase.value.first { it.id == pokemonId })
+
 
     override suspend fun doInsertPokemonDatabase(list: List<Pokemon>) {
-        pokemonDatabase.value = list
+        pokemonDatabase.value += list
+        println("pokemonDatabase.value: ${pokemonDatabase.value} list: $list")
     }
 
     override suspend fun doUpdateLastCacheUpdate(time: Long) {

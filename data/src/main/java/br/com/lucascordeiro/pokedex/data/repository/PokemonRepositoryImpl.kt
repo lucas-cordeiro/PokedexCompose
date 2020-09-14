@@ -38,13 +38,15 @@ class PokemonRepositoryImpl(
         preferenceController.lastCacheTime = time
     }
 
-    override fun doGetPokemonFromDatabase() = pokemonDao.getAll().map { it.map { pokemonEntity ->
-        val relation = pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId).map { pokemonCrossType ->
-            pokemonTypeDao.getById(pokemonCrossType.typeId).first()
-        }
-        pokemonEntity.types = relation
-        pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)
-    } }
+    override fun doGetPokemonFromDatabase(limit: Long, offset: Long) : Flow<List<Pokemon>> {
+        return pokemonDao.getAll( offset = offset,limit =  limit).map { it.map { pokemonEntity ->
+            val relation = pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId).map { pokemonCrossType ->
+                pokemonTypeDao.getById(pokemonCrossType.typeId).first()
+            }
+            pokemonEntity.types = relation
+            pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)
+        } }
+    }
 
     override fun doGetPokemonByIdFromDatabase(pokemonId: Long) = pokemonDao.getById(pokemonId)
         .map { pokemonEntity ->
@@ -55,8 +57,8 @@ class PokemonRepositoryImpl(
             pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)
         }
 
-    override suspend fun doGetPokemonFromNetwork() : List<Pokemon> {
-        val response = pokemonApiClient.doGetPokemon().results.orEmpty()
+    override suspend fun doGetPokemonFromNetwork(limit: Long, offset: Long) : List<Pokemon> {
+        val response = pokemonApiClient.doGetPokemon(offset = offset,limit = limit).results.orEmpty()
         return response.map { pokemonNetwork ->
             pokemonNetwork.apply {
                 id = url?.toUri()?.lastPathSegment?.toLong()

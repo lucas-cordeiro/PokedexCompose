@@ -15,6 +15,7 @@ import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
@@ -22,19 +23,36 @@ class HomeViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
     var pokemons: List<Pokemon> by mutableStateOf(listOf())
         private set
 
+    var loading: Boolean by mutableStateOf(false)
+        private set
+
     private val _errorMessage: MutableStateFlow<String?> = MutableStateFlow(null)
     val errorMessage: StateFlow<String?>
         get() = _errorMessage
 
+    private var loadingMoreItems = false
+
+    fun loadMoreItems(count: Long){
+        if(!loadingMoreItems) {
+            viewModelScope.launch(IO) {
+                delay(200)
+                loading = true
+                loadingMoreItems = true
+                useCase.doGetMorePokemon(count)
+            }
+        }
+    }
+
     init {
-        Log.d("BUG","init viewmodel")
+        loading = true
         viewModelScope.launch(IO) {
             useCase.doGetPokemon()
                     .collect {
+                        loadingMoreItems = false
+                        loading = false
                         withContext(Main) {
                             when (it) {
                                 is Result.Success -> {
-                                    Log.d("BUG", "Types: ${it.data.map { it.type.first().type }}")
                                     pokemons = it.data
                                 }
                                 is Result.Error -> {

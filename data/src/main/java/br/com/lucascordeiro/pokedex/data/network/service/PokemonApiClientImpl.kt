@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class PokemonApiClientImpl(private val appHttpClient: AppHttpClient) : PokemonApiClient{
-    override suspend fun doGetPokemon() = appHttpClient.httpClient.get<ResponsePokemonNetwork<PokemonNetwork>>(basePath){
-        parameter("offset", 0)
-        parameter("limit", 30)
+    override suspend fun doGetPokemon(offset: Long, limit: Long) = appHttpClient.httpClient.get<ResponsePokemonNetwork<PokemonNetwork>>(basePath){
+        parameter("offset", offset)
+        parameter("limit", limit)
     }
 
     override suspend fun doGetPokemonById(id: Long) = appHttpClient.httpClient.get<PokemonNetwork>("$basePath/$id")
