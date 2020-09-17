@@ -22,6 +22,11 @@
 # PokedexCompose
 ![License-MIT](https://img.shields.io/badge/License-MIT-red.svg)
 
+
+### Status: 🚧 In progress 🚧
+
+PokedexCompose is still under development
+
 ## Screenshots
 
 ![](https://i.imgur.com/p5fm2yM.png)
