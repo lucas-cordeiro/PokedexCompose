@@ -75,7 +75,7 @@ subprojects {
     detekt {
         failFast = true
         buildUponDefaultConfig = true
-        config = files("../config/detekt.yml")
+        config = files("../detekt.yml")
         reports {
             xml.enabled = true
             txt.enabled = true
