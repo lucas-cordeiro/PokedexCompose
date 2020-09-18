@@ -23,6 +23,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
+          
+          
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       - name: Install Danger
         run: yarn add danger danger-plugin-lint-report@1.0.0
