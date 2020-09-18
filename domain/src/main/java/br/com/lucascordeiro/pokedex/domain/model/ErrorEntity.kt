@@ -6,11 +6,11 @@ sealed class ErrorEntity {
 
         object NotFound : ErrorEntity()
 
-        object Timeout: ErrorEntity()
+        object Timeout : ErrorEntity()
 
         object Unknown : ErrorEntity()
 
-        object Unauthorized: ErrorEntity()
+        object Unauthorized : ErrorEntity()
     }
     sealed class App : ErrorEntity() {
         object Unknown : ErrorEntity()

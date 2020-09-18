@@ -11,8 +11,8 @@ class PokemonMapperImpl : PokemonMapper {
     override fun providePokemonNetworkMapper() = object : Mapper<PokemonNetwork, Pokemon> {
         override fun map(input: PokemonNetwork): Pokemon {
             return Pokemon(
-                id = input.id?:0L,
-                name = input.name?:"",
+                id = input.id ?: 0L,
+                name = input.name ?: "",
                 type = listOf(PokemonType.NORMAL),
                 imageUrl = ""
             )
@@ -22,10 +22,10 @@ class PokemonMapperImpl : PokemonMapper {
     override fun providePokemonEntityToPokemonMapper() = object : Mapper<PokemonEntity, Pokemon> {
         override fun map(input: PokemonEntity): Pokemon {
             return Pokemon(
-                id = input.pokemonId?:0L,
-                name = input.name?:"",
+                id = input.pokemonId,
+                name = input.name,
                 type = input.types?.map { providePokemonTypeEntityToPokemonTypeMapper().map(it) }.orEmpty(),
-                imageUrl = input.imageUrl?:""
+                imageUrl = input.imageUrl
             )
         }
     }
@@ -48,8 +48,7 @@ class PokemonMapperImpl : PokemonMapper {
 
     override fun providePokemonTypeEntityToPokemonTypeMapper() = object : Mapper<PokemonTypeEntity, PokemonType> {
         override fun map(input: PokemonTypeEntity): PokemonType {
-            return PokemonType.valueOf(input.name?.toUpperCase()?:PokemonType.NORMAL.name)
+            return PokemonType.valueOf(input.name?.toUpperCase() ?: PokemonType.NORMAL.name)
         }
     }
 }
-

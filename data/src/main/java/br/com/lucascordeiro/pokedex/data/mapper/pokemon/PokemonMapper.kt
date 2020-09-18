@@ -12,9 +12,9 @@ interface PokemonMapper {
 
     fun providePokemonEntityToPokemonMapper(): Mapper<PokemonEntity, Pokemon>
 
-    fun providePokemonToPokemonEntityMapper() : Mapper<Pokemon, PokemonEntity>
+    fun providePokemonToPokemonEntityMapper(): Mapper<Pokemon, PokemonEntity>
 
-    fun providePokemonTypeToPokemonTypeEntityMapper() : Mapper<PokemonType, PokemonTypeEntity>
+    fun providePokemonTypeToPokemonTypeEntityMapper(): Mapper<PokemonType, PokemonTypeEntity>
 
-    fun providePokemonTypeEntityToPokemonTypeMapper() : Mapper<PokemonTypeEntity, PokemonType>
+    fun providePokemonTypeEntityToPokemonTypeMapper(): Mapper<PokemonTypeEntity, PokemonType>
 }

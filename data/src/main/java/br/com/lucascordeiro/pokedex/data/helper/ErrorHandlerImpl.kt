@@ -8,9 +8,9 @@ import java.nio.channels.UnresolvedAddressException
 
 class ErrorHandlerImpl : ErrorHandler {
     override fun getError(throwable: Throwable): ErrorEntity {
-        return when(throwable){
+        return when (throwable) {
             is ClientRequestException -> {
-                when(throwable.response.status.value){
+                when (throwable.response.status.value) {
                     401 -> ErrorEntity.ApiError.Unauthorized
                     404 -> ErrorEntity.ApiError.NotFound
                     408 -> ErrorEntity.ApiError.Timeout

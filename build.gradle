@@ -2,8 +2,10 @@
 buildscript {
     ext {
         //Kotlin
-        kotlin_version = '1.4.0'
+        kotlin_version = '1.4.10'
         kotlin_coroutine_version = '1.3.9'
+        ktlint_version = '3.2.0'
+        detekt_version = '1.13.1'
 
         //Test
         junit_version = '4.13'
@@ -18,8 +20,9 @@ buildscript {
         compose_version = '1.0.0-alpha02'
         lifecycle_version = '2.3.0-alpha07'
         koin_version = '2.1.5'
-        coil_version = '0.2.1'
+        accompanist_coil_version = '0.2.1'
         router_version = '0.18.0'
+        lint_version = '26.2.0'
 
         compileSdkVersion = 30
         targetSdkVersion = 30
@@ -28,11 +31,13 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.0-alpha10'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
+        classpath "org.jmailen.gradle:kotlinter-gradle:$ktlint_version"
+        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detekt_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -44,10 +49,43 @@ allprojects {
         jcenter()
         maven { url "https://kotlin.bintray.com/kotlinx" }
         maven { url 'https://jitpack.io' }
+        maven { url 'https://plugins.gradle.org/m2/' }
         mavenCentral()
+    }
+
+    apply plugin: "org.jmailen.kotlinter"
+    apply plugin: "io.gitlab.arturbosch.detekt"
+}
+
+apply plugin: "org.jmailen.kotlinter"
+apply plugin: "io.gitlab.arturbosch.detekt"
+
+subprojects {
+    apply plugin: "org.jmailen.kotlinter"
+    apply plugin: "io.gitlab.arturbosch.detekt"
+
+    kotlinter  {
+        ignoreFailures = false
+        indentSize = 4
+        reporters = ['checkstyle', 'plain']
+        experimentalRules = false
+        disabledRules = ['no-wildcard-imports','final-newline','import-ordering']
+    }
+
+    detekt {
+        failFast = true
+        buildUponDefaultConfig = true
+        config = files("../config/detekt.yml")
+        reports {
+            xml.enabled = true
+            txt.enabled = true
+        }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+tasks.detekt.jvmTarget = "1.8"
+

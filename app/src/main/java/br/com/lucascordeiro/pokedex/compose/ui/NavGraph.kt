@@ -16,9 +16,8 @@ sealed class Destination : Parcelable {
 
     @Immutable
     @Parcelize
-    data class PokemonDetail(val pokemonBasic:@RawValue Pokemon) : Destination()
+    data class PokemonDetail(val pokemonBasic: @RawValue Pokemon) : Destination()
 }
-
 
 /**
  * Models the navigation actions in the app.

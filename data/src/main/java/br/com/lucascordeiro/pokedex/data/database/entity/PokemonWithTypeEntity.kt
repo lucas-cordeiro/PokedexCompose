@@ -7,7 +7,7 @@ data class PokemonWithTypeEntity(
     @Relation(
         parentColumn = "pokemonId",
         entityColumn = "typeId",
-       entity = PokemonTypeEntity::class,
+        entity = PokemonTypeEntity::class,
         associateBy = Junction(
             value = PokemonCrossTypeEntity::class,
             parentColumn = "pokemonId",

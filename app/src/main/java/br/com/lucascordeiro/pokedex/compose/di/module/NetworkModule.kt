@@ -15,7 +15,7 @@ val networkModule = module {
     factory { provideHttpTimeout() }
     factory { provideSerializer() }
     factory { provideLoggingInterceptor(BuildConfig.DEBUG) }
-    factory { ErrorHandlerImpl() as ErrorHandler}
+    factory { ErrorHandlerImpl() as ErrorHandler }
     single { provideHttpClient(BuildConfig.BASE_URL, get(), get(), get()) }
-    single { PokemonApiClientImpl(get()) as PokemonApiClient}
+    single { PokemonApiClientImpl(get()) as PokemonApiClient }
 }

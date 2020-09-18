@@ -19,7 +19,7 @@ fun doGetFakeDataNetwork() = listOf(
     Pokemon(
         id = 7,
         name = "Squirtle",
-        type =listOf(PokemonType.valueOf("WATER")),
+        type = listOf(PokemonType.valueOf("WATER")),
         imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
     )
 )

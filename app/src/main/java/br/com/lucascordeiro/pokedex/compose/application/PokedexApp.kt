@@ -15,12 +15,12 @@ class PokedexApp : Application() {
     }
 
     fun provideModules() = listOf(
-            networkModule,
-            repositoryModule,
-            useCaseModule,
-            mapperModule,
-            databaseModule,
-            sharedPreferenceModule,
-            viewModelModule
+        networkModule,
+        repositoryModule,
+        useCaseModule,
+        mapperModule,
+        databaseModule,
+        sharedPreferenceModule,
+        viewModelModule
     )
 }

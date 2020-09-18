@@ -11,7 +11,7 @@ import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
 fun TopBar(
     title: String,
     modifier: Modifier = Modifier
-){
+) {
     TopAppBar(
         title = {
             Text(text = title)
@@ -22,7 +22,7 @@ fun TopBar(
 
 @Preview
 @Composable
-fun PreviewTopBar(){
+fun PreviewTopBar() {
     PokedexComposeTheme(darkTheme = true) {
         TopBar(title = "Pokedex")
     }

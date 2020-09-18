@@ -2,9 +2,9 @@ package br.com.lucascordeiro.pokedex.domain.utils
 
 const val CACHE_DURATION = 1000 * 60 * 5
 
-const val DEFAULT_LIMIT = 30L
+const val DEFAULT_LIMIT = 12L
 
-//<-PokemonType Start->
+// <-PokemonType Start->
 const val TYPE_GHOST = "ghost"
 const val TYPE_STEEL = "steel"
 const val TYPE_DRAGON = "dragon"
@@ -23,4 +23,4 @@ const val TYPE_DARK = "dark"
 const val TYPE_PSYCHIC = "psychic"
 const val TYPE_FAIRY = "fairy"
 const val TYPE_POISON = "poison"
-//<-PokemonType End->
+// <-PokemonType End->

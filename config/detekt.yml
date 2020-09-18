@@ -1,0 +1,17 @@
+complexity:
+  active: true
+  LongParameterList:
+    active: true
+    functionThreshold: 10
+  ComplexMethod:
+    active: true
+    ignoreSingleWhenExpression: true
+
+style:
+  active: true
+  WildcardImport:
+    active: false
+  MagicNumber:
+    active: false
+  NewLineAtEndOfFile:
+    active: false

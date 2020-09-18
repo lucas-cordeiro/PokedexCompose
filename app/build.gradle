@@ -41,9 +41,11 @@ android {
         jvmTarget = '1.8'
         useIR = true
     }
+
     buildFeatures {
         compose true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
         kotlinCompilerVersion '1.4.0'
@@ -61,6 +63,7 @@ android {
 }
 
 dependencies {
+    lintChecks project(':lintrules')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation project(':data')
 
@@ -105,7 +108,7 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version"
 
     //ComposeUtils
-    implementation "dev.chrisbanes.accompanist:accompanist-coil:$coil_version"
+    implementation "dev.chrisbanes.accompanist:accompanist-coil:$accompanist_coil_version"
 
     //Router
     implementation "com.github.zsoltk:compose-router:$router_version"

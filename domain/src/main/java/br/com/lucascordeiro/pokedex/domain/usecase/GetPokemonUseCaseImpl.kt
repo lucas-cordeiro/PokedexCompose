@@ -7,15 +7,8 @@ import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
 import br.com.lucascordeiro.pokedex.domain.utils.CACHE_DURATION
 import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlin.coroutines.CoroutineContext
 
 class GetPokemonUseCaseImpl(
     private val pokemonRepository: PokemonRepository,
@@ -28,7 +21,7 @@ class GetPokemonUseCaseImpl(
         currentLimit = limit
 
         return currentOffset.asFlow()
-            .flatMapLatest {offset ->
+            .flatMapLatest { offset ->
                 flow {
                     emitAll(pokemonRepository.doGetPokemonFromDatabase(limit = offset + currentLimit, offset = 0))
                 }
