@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
         
       - name: Add plugin transform flow
-        uses: yarn add -D @babel/plugin-transform-flow-strip-types
+        uses: yarn add @babel/plugin-transform-flow-strip-types
         
       - name: Danger
         uses: danger/danger-js@9.1.6
