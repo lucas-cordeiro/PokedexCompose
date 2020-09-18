@@ -22,9 +22,14 @@
 # PokedexCompose
 ![License-MIT](https://img.shields.io/badge/License-MIT-red.svg)
 
+
+### Status: 🚧 In progress 🚧
+
+PokedexCompose is still under development
+
 ## Screenshots
 
-![](https://imgur.com/GxAPp3r.png)
+![](https://i.imgur.com/p5fm2yM.png)
 
 
 <!-- TABLE OF CONTENTS -->
@@ -53,7 +58,7 @@ Project developed for studies using the pokemon public api
 
 - [flutter_pokedex](https://github.com/scitbiz/flutter_pokedex/) by **Pham Sy Hung**
 - [Kotlin-Pokedex](https://github.com/mrcsxsiq/Kotlin-Pokedex) by **Marcos Paulo Farias**
-- [compose-pokedex](https://raw.githubusercontent.com/zsoltk/compose-pokedex) by **Zsolt Kocsi**
+- [compose-pokedex](https://github.com/zsoltk/compose-pokedex) by **Zsolt Kocsi**
 
 ### Built With
 * [Jetpack Compose](https://developer.android.com/jetpack/compose?hl=pt-br)
