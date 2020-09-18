@@ -1,24 +1,8 @@
 import {danger, fail, message, warn, schedule} from 'danger'
 
-const reporter = require("danger-plugin-lint-report")
+// Add a CHANGELOG entry for app changes
+const hasChangelog = danger.git.modified_files.includes("CHANGELOG.yml")
 
-// Scan ktlint reports
-schedule(reporter.scan({
-    fileMask: "**/reports/ktlint/*.xml",
-    reportSeverity: true,
-    requireLineModification: true,
-}))
-
-// Scan detekt reports
-schedule(reporter.scan({
-    fileMask: "**/reports/detekt.xml",
-    reportSeverity: true,
-    requireLineModification: true,
-}))
-
-// Scan Android Lint reports
-schedule(reporter.scan({
-    fileMask: "**/reports/lint-results-*.xml",
-    reportSeverity: true,
-    requireLineModification: true,
-}))
+if (!hasChangelog) {
+  fail("Please add a changelog entry for your changes. :crystall_ball:")
+}
