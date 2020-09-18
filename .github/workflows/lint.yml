@@ -6,8 +6,12 @@ jobs:
     name: Danger JS
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Danger
-        uses: danger/danger-js@10.4.0
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Install Danger
+        run: yarn add danger
+      - name: Run Danger
+        run: yarn danger ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
