@@ -16,6 +16,10 @@ jobs:
 
         - name: Run KtLint
           run: ./gradlew lintKotlin
+          env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         - name: Run Detekt
           run: ./gradlew detekt
+          env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
