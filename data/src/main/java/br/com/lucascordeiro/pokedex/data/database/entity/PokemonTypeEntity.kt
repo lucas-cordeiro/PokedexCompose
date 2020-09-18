@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
     tableName = "pokemonType",
     indices = arrayOf(Index(value = ["name"], unique = true))
 )
-data class PokemonTypeEntity  (
+data class PokemonTypeEntity (
     @PrimaryKey(autoGenerate = true)
     var typeId: Long? = null,
     var name: String? = null
