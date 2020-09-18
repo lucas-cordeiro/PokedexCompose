@@ -69,10 +69,19 @@ class GetPokemonUseCaseTest {
     @Test
     fun isValidUpdateDatabase() {
         runBlockingTest {
-            assertTrue(pokemonRepository.doGetPokemonFromDatabase(limit = 0, offset = 0).first().isEmpty())
+            assertTrue(
+                pokemonRepository.doGetPokemonFromDatabase(limit = 0, offset = 0).first().isEmpty()
+            )
             getPokemonUseCase.doRefresh(limit = 3)
             getPokemonUseCase.doGetPokemon(limit = 3).first()
-            assertEquals(pokemonRepository.doGetPokemonFromDatabase(limit = 3, offset = 0).first(), doGetFakeDataNetwork())
+            assertEquals(
+                pokemonRepository.doGetPokemonFromDatabase(
+                    limit = 3,
+                    offset = 0
+                )
+                    .first(),
+                doGetFakeDataNetwork()
+            )
         }
     }
 }

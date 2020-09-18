@@ -61,7 +61,8 @@ class HomeViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
                             is Result.Error -> {
                                 when (it.error) {
                                     is ErrorEntity.ApiError.Network -> {
-                                        _errorMessage.value = "Falha na conexão com a internet, verifique e tente novamente"
+                                        _errorMessage.value =
+                                            "Falha na conexão com a internet, verifique e tente novamente"
                                     }
                                     else ->
                                         _errorMessage.value =

@@ -25,9 +25,21 @@ class FakePokemonRepository : PokemonRepository {
         println("doGetPokemonFromDatabase: limit: $limit offset: $offset")
         return flowOf(pokemonDatabase.value.subList(offset.toInt(), limit.toInt()))
     }
-    override suspend fun doGetPokemonFromNetwork(limit: Long, offset: Long) = pokemonNetWork.subList(offset.toInt(), (offset + limit).toInt())
+    override suspend fun doGetPokemonFromNetwork(
+        limit: Long,
+        offset: Long
+    ) = pokemonNetWork.subList(
+        offset.toInt(),
+        (offset + limit).toInt()
+    )
 
-    override fun doGetPokemonByIdFromDatabase(pokemonId: Long): Flow<Pokemon> = flowOf(pokemonDatabase.value.first { it.id == pokemonId })
+    override fun doGetPokemonByIdFromDatabase(
+        pokemonId: Long
+    ): Flow<Pokemon> = flowOf(
+        pokemonDatabase.value.first {
+            it.id == pokemonId
+        }
+    )
 
     override suspend fun doInsertPokemonDatabase(list: List<Pokemon>) {
         pokemonDatabase.value += list
