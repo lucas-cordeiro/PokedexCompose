@@ -15,9 +15,7 @@ jobs:
          uses: actions/checkout@v2
 
        - name: "install detekt"
-         uses: yarn add detekt
+         run: yarn add detekt
        
        - name: "run detekt"
-         uses: detekt
-         with:
-          args: --fail-fast --config detekt.yml
+         run: detekt --config detekt.yml --fail-fast --build-upon-default-config
