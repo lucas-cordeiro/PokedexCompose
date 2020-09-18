@@ -14,7 +14,10 @@ jobs:
        - name: "checkout"
          uses: actions/checkout@v2
 
-       - name: "detekt"
-         uses: brew install detekt
+       - name: "install detekt"
+         uses: yarn add detekt
+       
+       - name: "run detekt"
+         uses: detekt
          with:
           args: --fail-fast --config detekt.yml
