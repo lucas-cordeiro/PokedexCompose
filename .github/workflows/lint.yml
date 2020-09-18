@@ -17,22 +17,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
-      - name: Install Danger
-        run: yarn add danger danger-plugin-lint-report@1.0.0
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-      - name: Run KtLint
-        run: ./gradlew lintKotlin
-        continue-on-error: true
-      - name: Run Detekt
-        run: ./gradlew detekt
-        continue-on-error: true
-      - name: Run Android Lint
-        run: ./gradlew lintDebug
-        continue-on-error: true
-      - name: Run Danger
-        run: yarn danger ci
-        env:
-          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+      - name: Danger
+        uses: danger/danger-js@9.1.6
+    env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
