@@ -24,4 +24,5 @@ jobs:
       - name: Danger
         uses: danger/danger-js@9.1.6
     env:
+        DANGER_DISABLE_TRANSPILATION: "true" 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
