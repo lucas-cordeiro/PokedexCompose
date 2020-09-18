@@ -1,28 +1,13 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CI
-
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+name: "Danger JS"
+on: [pull_request]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-        
-      - name: Add plugin transform flow
-        uses: yarn add @babel/plugin-transform-flow-strip-types
-        
-      - name: Danger
-        uses: danger/danger-js@9.1.6
-    env:
-        DANGER_DISABLE_TRANSPILATION: "true" 
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+build:
+name: Danger JS
+runs-on: ubuntu-latest
+steps:
+- uses: actions/checkout@v1
+- name: Danger
+uses: danger/danger-js@9.1.6
+env:
+GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
