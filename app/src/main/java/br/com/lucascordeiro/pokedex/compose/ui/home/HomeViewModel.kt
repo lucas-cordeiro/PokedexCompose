@@ -50,10 +50,9 @@ class HomeViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
     }
 
     fun initialize() {
-        viewModelScope.launch(IO) {
+        viewModelScope.launch {
             useCase.doGetPokemon()
                 .collect {
-                    withContext(Main) {
                         when (it) {
                             is Result.Success -> {
                                 pokemons = it.data
@@ -70,10 +69,8 @@ class HomeViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
                                 }
                             }
                         }
-                    }
-                    delay(1000)
-                    loadingMoreItems = false
-                    loading = false
+//                    loadingMoreItems = false
+//                    loading = false
                 }
         }
 

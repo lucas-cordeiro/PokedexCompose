@@ -21,24 +21,25 @@ class GetPokemonUseCaseImpl(
         currentLimit = limit
 
         return currentOffset.asFlow()
-            .flatMapLatest { offset ->
-                flow {
-                    emitAll(pokemonRepository.doGetPokemonFromDatabase(limit = offset + currentLimit, offset = 0))
+                .flatMapLatest { offset ->
+                    flow {
+                        emitAll(pokemonRepository.doGetPokemonFromDatabase(limit = offset + currentLimit, offset = 0))
+                    }
                 }
-            }
-            .map {
-                Result.Success(it)
-            }
-            .catch {
-                it.printStackTrace()
-                Result.Error<ErrorEntity>(errorHandler.getError(it))
-            }
+                .filter { it.isNotEmpty() }
+                .map {
+                    Result.Success(it)
+                }
+                .catch {
+                    it.printStackTrace()
+                    Result.Error<ErrorEntity>(errorHandler.getError(it))
+                }
     }
 
     override suspend fun doGetMorePokemon(limit: Long) {
         val dataFromNetwork = pokemonRepository.doGetPokemonFromNetwork(
-            offset = currentOffset.value + limit,
-            limit = currentLimit
+                offset = currentOffset.value + limit,
+                limit = currentLimit
         )
         pokemonRepository.doInsertPokemonDatabase(dataFromNetwork)
         currentOffset.send(currentOffset.value + limit)
@@ -46,14 +47,14 @@ class GetPokemonUseCaseImpl(
 
     override fun doGetPokemonById(pokemonId: Long): Flow<Result<Pokemon>> {
         return pokemonRepository
-            .doGetPokemonByIdFromDatabase(pokemonId)
-            .map {
-                Result.Success(it)
-            }
-            .catch {
-                it.printStackTrace()
-                Result.Error<ErrorEntity>(errorHandler.getError(it))
-            }
+                .doGetPokemonByIdFromDatabase(pokemonId)
+                .map {
+                    Result.Success(it)
+                }
+                .catch {
+                    it.printStackTrace()
+                    Result.Error<ErrorEntity>(errorHandler.getError(it))
+                }
     }
 
     override suspend fun doRefresh(offset: Long, limit: Long) {
@@ -61,8 +62,8 @@ class GetPokemonUseCaseImpl(
         val currentTime = pokemonRepository.doGetCurrentTime()
         if (currentTime - lastCacheUpdate > CACHE_DURATION) {
             val dataFromNetwork = pokemonRepository.doGetPokemonFromNetwork(
-                offset = offset,
-                limit = limit
+                    offset = offset,
+                    limit = limit
             )
             pokemonRepository.doInsertPokemonDatabase(dataFromNetwork)
             pokemonRepository.doUpdateLastCacheUpdate(currentTime)

@@ -33,7 +33,7 @@ fun PokedexComposeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
-    val colors = if (darkTheme || true) { // Aways dark
+    val colors = if (darkTheme) { // Aways dark
         DarkColorPalette
     } else {
         LightColorPalette

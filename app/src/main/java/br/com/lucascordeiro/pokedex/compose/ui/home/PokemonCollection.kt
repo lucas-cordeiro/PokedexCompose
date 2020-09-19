@@ -3,6 +3,7 @@ package br.com.lucascordeiro.pokedex.compose.ui.home
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumnForIndexed
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -35,10 +36,10 @@ fun PokemonCollection(
 
     scrollState.scrollTo(scrollPosition())
 
-    Stack() {
+    Stack(modifier = modifier.fillMaxSize()) {
         ScrollableColumn(
             scrollState = scrollState,
-            modifier = modifier
+            modifier = Modifier.fillMaxSize()
         ) {
             StaggeredVerticalGrid(
                 maxColumnWidth = 220.dp,
@@ -49,7 +50,7 @@ fun PokemonCollection(
                         scrollState = scrollState,
                         setPosition = setScrollPosition,
                         onPokemonSelected = onPokemonSelected,
-                        modifier = modifier,
+                        modifier = Modifier,
                         pokemon = pokemon
                     )
                 }
@@ -113,7 +114,7 @@ fun StaggeredVerticalGrid(
             height = height
         ) {
             val colY = IntArray(columns) { 0 }
-            placeables.forEach { placeable ->
+            placeables.forEachIndexed { index, placeable ->
                 val column = shortestColumn(colY)
                 placeable.place(
                     x = columnWidth * column,

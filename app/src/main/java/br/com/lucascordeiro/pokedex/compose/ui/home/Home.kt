@@ -1,12 +1,16 @@
 package br.com.lucascordeiro.pokedex.compose.ui.home
 
+import androidx.compose.foundation.Box
+import androidx.compose.foundation.ContentGravity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.onActive
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawOpacity
 import androidx.compose.ui.unit.dp
@@ -83,7 +87,7 @@ fun HomeScreen(
                 scrollPosition = scrollPosition,
                 setScrollPosition = setScrollPosition
             )
-            Loading(loading = true)
+            Loading(loading = loading)
         }
     }
 }
@@ -101,7 +105,7 @@ fun Loading(
     ) {
         val loadingRef = createRef()
         Surface(
-            elevation = 10.dp,
+            elevation = 1.dp,
             shape = CircleShape,
             modifier = Modifier
                 .padding(10.dp)

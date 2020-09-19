@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import br.com.lucascordeiro.pokedex.compose.R
@@ -54,6 +56,7 @@ fun PokemonView(
     }
 
     Surface(
+        color = if(MaterialTheme.colors.isLight) pokemonTypeTheme.colorLight else MaterialTheme.colors.surface,
         modifier = modifier
             .padding(5.dp)
             .preferredWidth(220.dp)
@@ -71,7 +74,7 @@ fun PokemonView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                PokemonName(pokemonId = pokemon.id, name = pokemon.name, textColor = pokemonTypeTheme.colorLight)
+                PokemonName(pokemonId = pokemon.id, name = pokemon.name, textColor = if(MaterialTheme.colors.isLight) Color.White else pokemonTypeTheme.colorLight)
                 Column {
                     pokemon.type.forEach {
                         PokemonType(type = it.type.capitalize(Locale.getDefault()))
@@ -87,7 +90,7 @@ fun PokemonView(
                 ) {
                     PokemonId(
                         id = "#${pokemon.id.toString().padStart(3, '0')}",
-                        color = pokemonTypeTheme.colorLight.copy(alpha = 0.3f)
+                        color = if(MaterialTheme.colors.isLight) pokemonTypeTheme.colorDark else pokemonTypeTheme.colorLight.copy(alpha = 0.3f)
                     )
                 }
                 PokemonImage(pokemonId = pokemon.id, pokemonImage = pokemon.imageUrl)
@@ -107,14 +110,18 @@ fun PokemonImage(
     ) {
         val (pokeball, image) = createRefs()
 
-        CoilImage(
-            data = R.drawable.ic_pokestop,
+        val pokeballImage = vectorResource(id = R.drawable.ic_pokestop)
+
+        Image(
+            asset = pokeballImage,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .preferredSize(80.dp)
                 .constrainAs(pokeball) {
                     centerTo(parent)
-                },
+                }
         )
+
         SharedElement(
             tag = "${pokemonId}_Image",
             type = SharedElementType.FROM,
@@ -156,7 +163,7 @@ fun PokemonId(
     color: Color,
     modifier: Modifier = Modifier
 ) {
-    Surface(
+    Box(
         modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 4.dp)
     ) {
         Text(
@@ -177,13 +184,13 @@ fun PokemonType(
         modifier = modifier
             .padding(0.dp, 4.dp, 0.dp, 0.dp)
             .clip(RoundedCornerShape(10.dp)),
-        color = grey800.copy(alpha = 0.4f)
+        color = grey800.copy(alpha = if(MaterialTheme.colors.isLight) 0.1f else 0.4f)
     ) {
         Text(
             modifier = Modifier.padding(10.dp, 2.dp),
             text = type,
             style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.onSurface
+            color = if(MaterialTheme.colors.isLight) Color.White else MaterialTheme.colors.onSurface
         )
     }
 }
