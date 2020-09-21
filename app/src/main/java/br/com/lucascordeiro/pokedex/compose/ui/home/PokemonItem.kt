@@ -71,40 +71,48 @@ fun PokemonView(
                 }
             )
     ) {
-        Row(
+        ConstraintLayout(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
-                PokemonName(
-                    pokemonId = pokemon.id,
-                    name = pokemon.name,
-                    textColor = if (MaterialTheme.colors.isLight) Color.White else pokemonTypeTheme.colorLight
-                )
+            val (pokemonName, pokemonTypes, pokemonId, pokemonImage) = createRefs()
+            PokemonName(
+                pokemonId = pokemon.id,
+                name = pokemon.name,
+                textColor = if (MaterialTheme.colors.isLight) Color.White else pokemonTypeTheme.colorLight,
+                modifier = Modifier.constrainAs(pokemonName){
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                }
+            )
+            Column(
+                modifier = Modifier.constrainAs(pokemonTypes){
+                    top.linkTo(pokemonName.bottom)
+                    start.linkTo(parent.start)
+                }
+            ) {
                 pokemon.type.forEach {
                     PokemonType(type = it.type.capitalize(Locale.getDefault()))
                 }
             }
-            Column(
-                modifier = Modifier.padding(4.dp, 0.dp)
-            ) {
-                Row(
-                    modifier = Modifier.preferredWidth(100.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    PokemonId(
-                        id = "#${pokemon.id.toString().padStart(3, '0')}",
-                        color = if (MaterialTheme.colors.isLight) pokemonTypeTheme.colorDark else pokemonTypeTheme.colorLight.copy(
-                            alpha = 0.3f
-                        )
-                    )
+            PokemonId(
+                id = "#${pokemon.id.toString().padStart(3, '0')}",
+                color = if (MaterialTheme.colors.isLight) pokemonTypeTheme.colorDark else pokemonTypeTheme.colorLight.copy(
+                    alpha = 0.3f
+                ),
+                modifier = Modifier.constrainAs(pokemonId){
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
                 }
-                PokemonImage(
-                    pokemonId = pokemon.id,
-                    pokemonImage = pokemon.imageUrl
-                )
-            }
+            )
+            PokemonImage(
+                pokemonId = pokemon.id,
+                pokemonImage = pokemon.imageUrl,
+                modifier = Modifier.constrainAs(pokemonImage){
+                    top.linkTo(pokemonId.bottom)
+                    end.linkTo(parent.end)
+                }
+            )
         }
     }
 }
@@ -163,12 +171,11 @@ fun PokemonName(
     textColor: Color,
     modifier: Modifier = Modifier
 ) {
-    SharedElement(tag = "${pokemonId}_Text", type = SharedElementType.FROM) {
+    SharedElement(tag = "${pokemonId}_Text", type = SharedElementType.FROM, modifier) {
         Text(
             text = name.capitalize(Locale.getDefault()),
             style = typography.subtitle1,
             color = textColor,
-            modifier = modifier
         )
     }
 }
@@ -180,10 +187,9 @@ fun PokemonId(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 4.dp)
+        modifier = modifier.padding(0.dp, 0.dp, 0.dp, 4.dp)
     ) {
         Text(
-            modifier = modifier,
             text = id,
             style = typography.subtitle2,
             color = color
