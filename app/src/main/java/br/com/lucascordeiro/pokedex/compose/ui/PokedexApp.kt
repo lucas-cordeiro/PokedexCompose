@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.savedinstancestate.rememberSavedInstanceState
 import br.com.lucascordeiro.pokedex.compose.ui.home.Home
+import br.com.lucascordeiro.pokedex.compose.ui.pokedex.Pokedex
 import br.com.lucascordeiro.pokedex.compose.ui.pokedetail.PokemonDetail
 import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
 import br.com.lucascordeiro.pokedex.compose.ui.utils.Navigator
@@ -26,9 +27,15 @@ fun PokedexApp(backPressedDispatcher: OnBackPressedDispatcher) {
                 current = navigator.current
             ) { destination ->
                 when (destination) {
-                    Destination.Home -> Home(onPokemonSelected = actions.selectPokemon)
+                    Destination.Home -> Home(
+                            openPokedex = actions.openPokedex
+                    )
+                    Destination.Pokedex -> Pokedex(onPokemonSelected = actions.selectPokemon, upPress = actions.upPress)
                     is Destination.PokemonDetail -> {
-                        PokemonDetail(pokemonBasic = destination.pokemonBasic, upPress = actions.upPress)
+                        PokemonDetail(
+                            pokemonBasic = destination.pokemonBasic,
+                            upPress = actions.upPress
+                        )
                     }
                 }
             }

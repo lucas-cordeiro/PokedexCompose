@@ -1,7 +1,5 @@
-package br.com.lucascordeiro.pokedex.compose.ui.home
+package br.com.lucascordeiro.pokedex.compose.ui.components
 
-import androidx.compose.animation.core.*
-import androidx.compose.animation.transition
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,24 +7,19 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.drawLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ContextAmbient
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import br.com.lucascordeiro.pokedex.compose.R
-import br.com.lucascordeiro.pokedex.compose.helper.PokemonTypeTheme
-import br.com.lucascordeiro.pokedex.compose.ui.components.AnimatingLoading
 import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
 import br.com.lucascordeiro.pokedex.compose.ui.theme.grey800
+import br.com.lucascordeiro.pokedex.compose.ui.theme.grey900
 import br.com.lucascordeiro.pokedex.compose.ui.theme.typography
 import br.com.lucascordeiro.pokedex.compose.ui.utils.*
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.PokemonType
-import dev.chrisbanes.accompanist.coil.CoilImage
 import java.util.*
 
 @Composable
@@ -130,9 +123,9 @@ fun PokemonImage(
 
         val pokeballImage = vectorResource(id = R.drawable.ic_pokestop)
 
-        Image(
+        Icon(
             asset = pokeballImage,
-            contentScale = ContentScale.Crop,
+            tint = (if(MaterialTheme.colors.isLight) Color.White else Color.Black).copy(0.2f),
             modifier = Modifier
                 .preferredSize(80.dp)
                 .constrainAs(pokeball) {

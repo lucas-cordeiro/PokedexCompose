@@ -12,6 +12,9 @@ import kotlinx.android.parcel.RawValue
  */
 sealed class Destination : Parcelable {
     @Parcelize
+    object Pokedex : Destination()
+
+    @Parcelize
     object Home : Destination()
 
     @Immutable
@@ -25,6 +28,9 @@ sealed class Destination : Parcelable {
 class Actions(navigator: Navigator<Destination>) {
     val selectPokemon: (Pokemon) -> Unit = { pokemonBasic: Pokemon ->
         navigator.navigate(Destination.PokemonDetail(pokemonBasic))
+    }
+    val openPokedex: ()  -> Unit = {
+        navigator.navigate(Destination.Pokedex)
     }
     val upPress: () -> Unit = {
         navigator.back()

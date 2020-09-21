@@ -1,4 +1,4 @@
-package br.com.lucascordeiro.pokedex.compose.ui.home
+package br.com.lucascordeiro.pokedex.compose.ui.pokedex
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -12,15 +12,13 @@ import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonUseCase
 import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class HomeViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
+class PokedexViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
     var pokemons: List<Pokemon> by mutableStateOf(listOf())
         private set
 
@@ -54,6 +52,7 @@ class HomeViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
     }
 
     init {
+        Log.d("BUG", "init")
         viewModelScope.launch {
             useCase.doGetPokemon()
                 .collect {

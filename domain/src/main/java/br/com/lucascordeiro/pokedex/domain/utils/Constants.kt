@@ -1,8 +1,8 @@
 package br.com.lucascordeiro.pokedex.domain.utils
 
-const val CACHE_DURATION = 1000 * 60 * 5
+const val CACHE_DURATION = 1000 * 60 * 60 * 24 * 365
 
-const val DEFAULT_LIMIT = 30L
+const val DEFAULT_LIMIT = 12L
 
 // <-PokemonType Start->
 const val TYPE_GHOST = "ghost"

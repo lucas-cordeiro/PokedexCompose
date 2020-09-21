@@ -1,153 +1,84 @@
 package br.com.lucascordeiro.pokedex.compose.ui.home
 
-import androidx.compose.foundation.Box
-import androidx.compose.foundation.ContentGravity
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.onActive
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawOpacity
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.viewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.ui.tooling.preview.Preview
-import br.com.lucascordeiro.pokedex.compose.di.component.PokedexComponent
-import br.com.lucascordeiro.pokedex.compose.ui.components.AnimatingLoading
-import br.com.lucascordeiro.pokedex.compose.ui.components.TopBar
-import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
-import br.com.lucascordeiro.pokedex.compose.ui.utils.SharedElementsRoot
-import br.com.lucascordeiro.pokedex.domain.model.Pokemon
-import br.com.lucascordeiro.pokedex.domain.model.PokemonType
-import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
+import br.com.lucascordeiro.pokedex.compose.ui.components.StaggeredVerticalGrid
+import br.com.lucascordeiro.pokedex.compose.ui.theme.*
 
 @Composable
 fun Home(
-    onPokemonSelected: (Pokemon) -> Unit
-) {
-    val viewModel: HomeViewModel = viewModel(
-        null,
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return HomeViewModel(PokedexComponent().useCase) as T
-            }
-        }
-    )
-
-    HomeScreen(
-        pokemons = viewModel.pokemons,
-        loading = viewModel.loading,
-        scrollPosition = {
-            viewModel.scrollPosition
-        },
-        setScrollPosition = {
-            viewModel.addScrollPosition(it)
-        },
-        onPokemonSelected = onPokemonSelected,
-        loadMoreItems = {
-            viewModel.loadMoreItems(DEFAULT_LIMIT)
-        }
-    )
+        openPokedex: () -> Unit
+){
+    HomeScreen(openPokedex)
 }
 
 @Composable
 fun HomeScreen(
-    onPokemonSelected: (Pokemon) -> Unit,
-    scrollPosition: () -> Float,
-    setScrollPosition: (Float) -> Unit,
-    pokemons: List<Pokemon>,
-    loadMoreItems: () -> Unit,
-    loading: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Scaffold(
-        topBar = {
-            TopBar(title = "Pokedex")
-        }
+        openPokedex: () -> Unit
+){
+    Surface(
+            modifier = Modifier.clip(RoundedCornerShape(
+                    topLeft = 0.dp,
+                    topRight = 0.dp,
+                    bottomLeft = 20.dp,
+                    bottomRight = 20.dp
+            ))
     ) {
-        Stack {
-            PokemonCollection(
-                modifier = modifier,
-                pokemons = pokemons,
-                onPokemonSelected = onPokemonSelected,
-                loadMoreItems = loadMoreItems,
-                loading = loading,
-                scrollPosition = scrollPosition,
-                setScrollPosition = setScrollPosition
+        ConstraintLayout {
+            val (title, options) = createRefs()
+
+            Text(
+                    text = "What Pokemon are you looking for?",
+                    color = MaterialTheme.colors.onBackground,
+                    style = MaterialTheme.typography.h4,
+                    modifier = Modifier
+                            .padding(20.dp,0.dp)
+                            .constrainAs(title){
+                                top.linkTo(parent.top, 30.dp)
+                            }
             )
-            Loading(loading = loading)
+
+            StaggeredVerticalGrid(
+                    maxColumnWidth = 220.dp,
+                    modifier = Modifier
+                            .padding(4.dp)
+                            .constrainAs(options) {
+                        top.linkTo(title.bottom, 20.dp)
+                        bottom.linkTo(parent.bottom, 20.dp)
+                    }
+            ) {
+                HomeOption(title = "Pokedex", color = grassLight, onClick = { openPokedex() })
+                HomeOption(title = "Movies", color = fireLight, onClick = {})
+                HomeOption(title = "Abilities", color = waterLight, onClick = {})
+                HomeOption(title = "Items", color = electricLight, onClick = {})
+                HomeOption(title = "Locations", color = poisonLight, onClick = {})
+                HomeOption(title = "Types", color = groundLight, onClick = {})
+            }
+
+
         }
     }
 }
 
-@Composable
-fun Loading(
-    loading: Boolean,
-    modifier: Modifier = Modifier
-) {
-    ConstraintLayout(
-        modifier = modifier
-            .fillMaxWidth(1f)
-            .drawOpacity(if (loading) 1f else 0f)
 
-    ) {
-        val loadingRef = createRef()
-        Surface(
-            elevation = 1.dp,
-            shape = CircleShape,
-            modifier = Modifier
-                .padding(10.dp)
-                .wrapContentSize()
-                .constrainAs(loadingRef) {
-                    centerTo(parent)
-                }
-        ) {
-            AnimatingLoading(
-                infinite = true,
-                modifier = Modifier.size(50.dp)
-            )
-        }
-    }
-}
 
 @Preview
 @Composable
-fun PreviewMainScreen() {
+fun PreviewHomeScreen(){
     PokedexComposeTheme(darkTheme = true) {
-        SharedElementsRoot {
-            HomeScreen(
-                pokemons = remember { generateList() },
-                onPokemonSelected = {},
-                loading = true,
-                scrollPosition = { 1f },
-                setScrollPosition = {},
-                loadMoreItems = {}
-            )
-        }
+        HomeScreen(
+                openPokedex = {}
+        )
     }
 }
-
-fun generateList() = listOf(
-    Pokemon(
-        id = 1,
-        name = "Bulbasaur",
-        imageUrl = "https://raw.githubusercontent.com/" +
-            "PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" +
-            "1.png",
-        type = listOf(PokemonType.GRASS)
-    ),
-    Pokemon(
-        id = 4,
-        name = "Charmander",
-        imageUrl = "https://raw.githubusercontent.com/" +
-            "PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" +
-            "4.png",
-        type = listOf(PokemonType.FIRE)
-    )
-)
