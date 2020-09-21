@@ -1,6 +1,7 @@
 package br.com.lucascordeiro.pokedex.compose.ui.home
 
 import androidx.compose.animation.core.*
+import androidx.compose.animation.transition
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,13 +9,17 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.drawLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import br.com.lucascordeiro.pokedex.compose.R
+import br.com.lucascordeiro.pokedex.compose.helper.PokemonTypeTheme
+import br.com.lucascordeiro.pokedex.compose.ui.components.AnimatingLoading
 import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
 import br.com.lucascordeiro.pokedex.compose.ui.theme.grey800
 import br.com.lucascordeiro.pokedex.compose.ui.theme.typography
@@ -46,8 +51,6 @@ fun PokemonView(
     scrollState: ScrollState,
     setPosition: (Float) -> Unit,
     onPokemonSelected: (Pokemon) -> Unit,
-//        alphaProgress: () -> Float,
-//        positionYProgress: () -> Float,
     pokemon: Pokemon,
     modifier: Modifier = Modifier
 ) {
@@ -56,7 +59,7 @@ fun PokemonView(
     }
 
     Surface(
-        color = if(MaterialTheme.colors.isLight) pokemonTypeTheme.colorLight else MaterialTheme.colors.surface,
+        color = if (MaterialTheme.colors.isLight) pokemonTypeTheme.colorLight else MaterialTheme.colors.surface,
         modifier = modifier
             .padding(5.dp)
             .preferredWidth(220.dp)
@@ -74,11 +77,13 @@ fun PokemonView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                PokemonName(pokemonId = pokemon.id, name = pokemon.name, textColor = if(MaterialTheme.colors.isLight) Color.White else pokemonTypeTheme.colorLight)
-                Column {
-                    pokemon.type.forEach {
-                        PokemonType(type = it.type.capitalize(Locale.getDefault()))
-                    }
+                PokemonName(
+                    pokemonId = pokemon.id,
+                    name = pokemon.name,
+                    textColor = if (MaterialTheme.colors.isLight) Color.White else pokemonTypeTheme.colorLight
+                )
+                pokemon.type.forEach {
+                    PokemonType(type = it.type.capitalize(Locale.getDefault()))
                 }
             }
             Column(
@@ -90,10 +95,15 @@ fun PokemonView(
                 ) {
                     PokemonId(
                         id = "#${pokemon.id.toString().padStart(3, '0')}",
-                        color = if(MaterialTheme.colors.isLight) pokemonTypeTheme.colorDark else pokemonTypeTheme.colorLight.copy(alpha = 0.3f)
+                        color = if (MaterialTheme.colors.isLight) pokemonTypeTheme.colorDark else pokemonTypeTheme.colorLight.copy(
+                            alpha = 0.3f
+                        )
                     )
                 }
-                PokemonImage(pokemonId = pokemon.id, pokemonImage = pokemon.imageUrl)
+                PokemonImage(
+                    pokemonId = pokemon.id,
+                    pokemonImage = pokemon.imageUrl
+                )
             }
         }
     }
@@ -134,7 +144,13 @@ fun PokemonImage(
                 modifier = Modifier
                     .preferredSize(80.dp),
                 contentScale = ContentScale.Crop,
-                placeholderColor = null
+                placeHolder = {
+                    AnimatingLoading(
+                        infinite = true,
+                        modifier = Modifier.size(50.dp),
+                        backgroundColor = null,
+                    )
+                }
             )
         }
     }

@@ -1,5 +1,6 @@
 package br.com.lucascordeiro.pokedex.compose.ui.home
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +10,7 @@ import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonUseCase
+import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -41,36 +43,40 @@ class HomeViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
     fun loadMoreItems(count: Long) {
         if (!loadingMoreItems) {
             viewModelScope.launch(IO) {
-                delay(200)
                 loading = true
                 loadingMoreItems = true
                 useCase.doGetMorePokemon(count)
+                delay(200)
+                loading = false
+                loadingMoreItems = false
             }
         }
     }
 
-    fun initialize() {
+    init {
         viewModelScope.launch {
             useCase.doGetPokemon()
                 .collect {
-                        when (it) {
-                            is Result.Success -> {
-                                pokemons = it.data
+                    when (it) {
+                        is Result.Success -> {
+                            if(it.data.size - pokemons.size >= DEFAULT_LIMIT){
+                                loading = false
+                                loadingMoreItems = false
                             }
-                            is Result.Error -> {
-                                when (it.error) {
-                                    is ErrorEntity.ApiError.Network -> {
-                                        _errorMessage.value =
-                                            "Falha na conexão com a internet, verifique e tente novamente"
-                                    }
-                                    else ->
-                                        _errorMessage.value =
-                                            "Ocorreu um erro, tente novamente"
+                            pokemons = it.data
+                        }
+                        is Result.Error -> {
+                            when (it.error) {
+                                is ErrorEntity.ApiError.Network -> {
+                                    _errorMessage.value =
+                                        "Falha na conexão com a internet, verifique e tente novamente"
                                 }
+                                else ->
+                                    _errorMessage.value =
+                                        "Ocorreu um erro, tente novamente"
                             }
                         }
-//                    loadingMoreItems = false
-//                    loading = false
+                    }
                 }
         }
 

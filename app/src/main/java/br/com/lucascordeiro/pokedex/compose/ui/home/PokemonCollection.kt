@@ -36,14 +36,13 @@ fun PokemonCollection(
 
     scrollState.scrollTo(scrollPosition())
 
-    Stack(modifier = modifier.fillMaxSize()) {
         ScrollableColumn(
             scrollState = scrollState,
             modifier = Modifier.fillMaxSize()
         ) {
             StaggeredVerticalGrid(
                 maxColumnWidth = 220.dp,
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.fillMaxHeight().padding(4.dp)
             ) {
                 pokemons.forEach { pokemon ->
                     PokemonItem(
@@ -80,7 +79,6 @@ fun PokemonCollection(
                 )
             }
         }
-    }
 }
 
 @Composable

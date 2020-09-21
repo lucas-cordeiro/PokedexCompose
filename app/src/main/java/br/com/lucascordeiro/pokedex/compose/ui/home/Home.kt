@@ -40,12 +40,6 @@ fun Home(
         }
     )
 
-    onActive(
-        callback = {
-            viewModel.initialize()
-        }
-    )
-
     HomeScreen(
         pokemons = viewModel.pokemons,
         loading = viewModel.loading,

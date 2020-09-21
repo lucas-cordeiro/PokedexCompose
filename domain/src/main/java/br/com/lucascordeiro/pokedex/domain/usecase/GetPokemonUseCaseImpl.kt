@@ -37,12 +37,12 @@ class GetPokemonUseCaseImpl(
     }
 
     override suspend fun doGetMorePokemon(limit: Long) {
+        currentOffset.send(currentOffset.value + limit)
         val dataFromNetwork = pokemonRepository.doGetPokemonFromNetwork(
-                offset = currentOffset.value + limit,
+                offset = currentOffset.value,
                 limit = currentLimit
         )
         pokemonRepository.doInsertPokemonDatabase(dataFromNetwork)
-        currentOffset.send(currentOffset.value + limit)
     }
 
     override fun doGetPokemonById(pokemonId: Long): Flow<Result<Pokemon>> {

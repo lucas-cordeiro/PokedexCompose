@@ -11,17 +11,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Layout
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun AnimatingLoading(
-    backgroundColor: Color = MaterialTheme.colors.background,
+    backgroundColor: Color? = MaterialTheme.colors.background,
     backgroundPadding: Dp = 4.dp,
     progressColor: Color = MaterialTheme.colors.primary,
     progressColorSecondary: Color = MaterialTheme.colors.secondary,
-    progressWidth: () -> Float = { 20f },
+    progressWidth: () -> Float = { 10f },
     progress: () -> Float = { 0f },
     infinite: Boolean = false,
     modifier: Modifier = Modifier
@@ -37,32 +41,35 @@ fun AnimatingLoading(
         )
         Loading(
             background = {
-                Background(backgroundColor = backgroundColor)
+                backgroundColor?.let {
+                    Background(backgroundColor = backgroundColor)
+                }
             },
             progressBar = {
                 ProgressBar(
                     angle = { transition[angle] },
                     progress = { transition[progressValue] },
                     progressColor = { transition[color] },
-                    progressWidth = progressWidth,
-                    backgroundColor = backgroundColor
+                    progressWidth = progressWidth
                 )
             },
             backgroundPadding = backgroundPadding,
             modifier = modifier
         )
-    } else {
+    }
+    else {
         Loading(
             background = {
-                Background(backgroundColor = backgroundColor)
+                backgroundColor?.let {
+                    Background(backgroundColor = backgroundColor)
+                }
             },
             progressBar = {
                 ProgressBar(
                     angle = { 0f },
                     progress = progress,
                     progressColor = { progressColor },
-                    progressWidth = progressWidth,
-                    backgroundColor = backgroundColor
+                    progressWidth = progressWidth
                 )
             },
             backgroundPadding = backgroundPadding,
@@ -86,7 +93,6 @@ fun ProgressBar(
     progress: () -> Float,
     angle: () -> Float,
     progressColor: () -> Color,
-    backgroundColor: Color,
     progressWidth: () -> Float
 ) {
     ConstraintLayout(
@@ -102,15 +108,11 @@ fun ProgressBar(
                 color = progressColor(),
                 startAngle = 360f * (angle() / 100),
                 sweepAngle = 360f * (progress() / 100),
-                useCenter = true
+                useCenter = false,
+                style = Stroke(
+                    width = progressWidth()
+                )
             )
-        }
-        Canvas(
-            modifier = Modifier.fillMaxSize().constrainAs(center) {
-                centerTo(parent)
-            }
-        ) {
-            drawCircle(color = backgroundColor, radius = (this.size.width - progressWidth()) / 2)
         }
     }
 }
@@ -131,21 +133,35 @@ fun Loading(
             }
         }
     ) { measurables, constraints ->
-        val backgroundPlaceable = measurables[0].measure(constraints)
-        val iconPlaceable = measurables[1].measure(constraints)
+        if(measurables.size > 1) {
+            val backgroundPlaceable = measurables[0].measure(constraints)
+            val iconPlaceable = measurables[1].measure(constraints)
 
-        val height = constraints.maxHeight
-        val width = constraints.maxWidth
+            val height = constraints.maxHeight
+            val width = constraints.maxWidth
 
-        layout(width, height) {
-            backgroundPlaceable.place(
-                constraints.maxWidth / 2 - backgroundPlaceable.width / 2,
-                constraints.maxHeight / 2 - backgroundPlaceable.height / 2
-            )
-            iconPlaceable.place(
-                constraints.maxWidth / 2 - iconPlaceable.width / 2,
-                constraints.maxHeight / 2 - iconPlaceable.height / 2
-            )
+            layout(width, height) {
+                backgroundPlaceable.place(
+                    constraints.maxWidth / 2 - backgroundPlaceable.width / 2,
+                    constraints.maxHeight / 2 - backgroundPlaceable.height / 2
+                )
+                iconPlaceable.place(
+                    constraints.maxWidth / 2 - iconPlaceable.width / 2,
+                    constraints.maxHeight / 2 - iconPlaceable.height / 2
+                )
+            }
+        }else{
+            val iconPlaceable = measurables[0].measure(constraints)
+
+            val height = constraints.maxHeight
+            val width = constraints.maxWidth
+
+            layout(width, height) {
+                iconPlaceable.place(
+                    constraints.maxWidth / 2 - iconPlaceable.width / 2,
+                    constraints.maxHeight / 2 - iconPlaceable.height / 2
+                )
+            }
         }
     }
 }

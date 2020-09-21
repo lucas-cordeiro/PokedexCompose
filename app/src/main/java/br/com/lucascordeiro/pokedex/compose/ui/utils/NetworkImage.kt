@@ -9,26 +9,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import dev.chrisbanes.accompanist.coil.CoilImage
+import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 
 @Composable
 fun NetworkImage(
     url: String,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
-    placeholderColor: Color? = MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
+    placeHolder: @Composable (() -> Unit)? = null,
+    placeholderColor: Color? = MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
 ) {
     CoilImage(
         data = url,
         modifier = modifier,
         contentScale = contentScale,
-        loading = {
-            if (placeholderColor != null) {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(placeholderColor)
-                )
-            }
-        }
+        loading = placeHolder
+                ?: if (placeholderColor != null) {
+                    {
+                        Spacer(
+                                modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(placeholderColor)
+                        )
+                    }
+                }else null
     )
 }
