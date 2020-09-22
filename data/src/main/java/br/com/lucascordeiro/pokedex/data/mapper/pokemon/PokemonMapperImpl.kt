@@ -1,5 +1,7 @@
 package br.com.lucascordeiro.pokedex.data.mapper.pokemon
 
+import android.util.Log
+import androidx.core.net.toUri
 import br.com.lucascordeiro.pokedex.data.database.entity.PokemonEntity
 import br.com.lucascordeiro.pokedex.data.database.entity.PokemonTypeEntity
 import br.com.lucascordeiro.pokedex.data.mapper.Mapper
@@ -10,11 +12,14 @@ import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 class PokemonMapperImpl : PokemonMapper {
     override fun providePokemonNetworkMapper() = object : Mapper<PokemonNetwork, Pokemon> {
         override fun map(input: PokemonNetwork): Pokemon {
+            Log.d("BUG","MAP: ${input.id}")
             return Pokemon(
-                id = input.id ?: 0L,
+                id = input.id?:0L,
                 name = input.name ?: "",
                 type = listOf(PokemonType.NORMAL),
-                imageUrl = ""
+                imageUrl = "https://raw.githubusercontent.com" +
+                        "/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork" +
+                        "/${ input.id}.png"
             )
         }
     }
@@ -34,7 +39,7 @@ class PokemonMapperImpl : PokemonMapper {
         override fun map(input: Pokemon): PokemonEntity {
             return PokemonEntity(
                 pokemonId = input.id,
-                name = input.name,
+                name = input.name.toLowerCase(),
                 imageUrl = input.imageUrl
             )
         }

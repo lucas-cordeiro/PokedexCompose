@@ -7,7 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface GetPokemonUseCase {
     suspend fun doGetPokemon(limit: Long = DEFAULT_LIMIT): Flow<Result<List<Pokemon>>>
-    suspend fun doGetMorePokemon(limit: Long)
+    suspend fun doGetMorePokemon(limit: Long= DEFAULT_LIMIT)
     fun doGetPokemonById(pokemonId: Long): Flow<Result<Pokemon>>
-    suspend fun doRefresh(offset: Long = 0, limit: Long = DEFAULT_LIMIT)
+    suspend fun doDownloadPokemonData() : Flow<Result<Long>>
+    suspend fun doNeedDownloadPokemonData() : Boolean
 }

@@ -7,7 +7,11 @@ import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
 import br.com.lucascordeiro.pokedex.domain.utils.CACHE_DURATION
 import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
+import br.com.lucascordeiro.pokedex.domain.utils.TOTAL_POKEMON_COUNT
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 
 class GetPokemonUseCaseImpl(
@@ -28,45 +32,77 @@ class GetPokemonUseCaseImpl(
                 }
                 .filter { it.isNotEmpty() }
                 .map {
-                    Result.Success(it)
+                    val data: Result<List<Pokemon>> = Result.Success(it)
+                    data
                 }
                 .catch {
                     it.printStackTrace()
-                    Result.Error<ErrorEntity>(errorHandler.getError(it))
+                    emit(Result.Error(errorHandler.getError(it)))
                 }
+
     }
 
     override suspend fun doGetMorePokemon(limit: Long) {
         currentOffset.send(currentOffset.value + limit)
-        val dataFromNetwork = pokemonRepository.doGetPokemonFromNetwork(
-                offset = currentOffset.value,
-                limit = currentLimit
-        )
-        pokemonRepository.doInsertPokemonDatabase(dataFromNetwork)
+//        val dataFromNetwork = pokemonRepository.doGetPokemonFromNetwork(
+//                offset = currentOffset.value,
+//                limit = currentLimit
+//        )
+//        pokemonRepository.doInsertPokemonDatabase(dataFromNetwork)
     }
 
     override fun doGetPokemonById(pokemonId: Long): Flow<Result<Pokemon>> {
         return pokemonRepository
                 .doGetPokemonByIdFromDatabase(pokemonId)
                 .map {
-                    Result.Success(it)
+                    val data: Result<Pokemon> = Result.Success(it)
+                    data
                 }
                 .catch {
                     it.printStackTrace()
-                    Result.Error<ErrorEntity>(errorHandler.getError(it))
+                    emit(Result.Error(errorHandler.getError(it)))
                 }
     }
 
-    override suspend fun doRefresh(offset: Long, limit: Long) {
-        val lastCacheUpdate = pokemonRepository.doGetLastCacheUpdate()
-        val currentTime = pokemonRepository.doGetCurrentTime()
-        if (currentTime - lastCacheUpdate > CACHE_DURATION) {
-            val dataFromNetwork = pokemonRepository.doGetPokemonFromNetwork(
-                    offset = offset,
-                    limit = limit
-            )
-            pokemonRepository.doInsertPokemonDatabase(dataFromNetwork)
-            pokemonRepository.doUpdateLastCacheUpdate(currentTime)
+    override suspend fun doNeedDownloadPokemonData() = pokemonRepository.doGetNeedDownloadData()
+
+    override suspend fun doDownloadPokemonData(): Flow<Result<Long>> {
+        return try{
+            if (pokemonRepository.doGetNeedDownloadData()) {
+                var currentCount = pokemonRepository.doGetPokemonCount()
+                val diff = TOTAL_POKEMON_COUNT - currentCount
+                if (diff > 0) {//NeedDownload
+                    val databaseIds = pokemonRepository.doGetPokemonIdsFromDatabase()
+                    val networkIds = pokemonRepository.doGetPokemonIdsFromNetwork()
+                    val needIds = networkIds.filter { networkId ->
+                        !databaseIds.contains(networkId)
+                    }
+                    println("BUG networkIds: $networkIds")
+                    println("BUG databaseIds: $databaseIds")
+                    println("BUG needIds: $needIds")
+                    flow<Result<Long>> {
+                        emit(Result.Success(currentCount))
+                        needIds.map { pokemonId ->
+                            println("BUG needId pokemonId: $pokemonId")
+                            val pokemon = pokemonRepository.doGetPokemonByIdFromNetwork(pokemonId)
+                            println("BUG POKEMON ID: ${pokemon.id} ${pokemon.name}")
+                            pokemonRepository.doInsertPokemonDatabase(listOf(pokemon))
+                            currentCount+=1
+                            emit(Result.Success(currentCount))
+                        }
+                    }.catch {
+                        it.printStackTrace()
+                        emit(Result.Error(errorHandler.getError(it)))
+                    }
+                } else {
+                    pokemonRepository.doUpdateNeedDownloadData(false)
+                    flowOf(Result.Success(TOTAL_POKEMON_COUNT))
+                }
+            } else {
+                flowOf(Result.Success(TOTAL_POKEMON_COUNT))
+            }
+        }catch (t: Throwable){
+            flowOf(Result.Error(errorHandler.getError(t)))
         }
     }
 }

@@ -11,12 +11,19 @@ class PreferenceControllerImpl(private val context: Context) : PreferenceControl
     )
 
     override var lastCacheTime: Long
-        get() = prefs.getLong(PREF_KEY_LAST_CAHCE_TIME, 0L)
+        get() = prefs.getLong(PREF_KEY_LAST_CACHE_TIME, 0L)
         set(value) {
-            prefs.edit().putLong(PREF_KEY_LAST_CAHCE_TIME, value).apply()
+            prefs.edit().putLong(PREF_KEY_LAST_CACHE_TIME, value).apply()
+        }
+
+    override var needDownload: Boolean
+        get() = prefs.getBoolean(PREF_KEY_LAST_NEED_DOWNLOAD, false)
+        set(value) {
+            prefs.edit().putBoolean(PREF_KEY_LAST_NEED_DOWNLOAD, value).apply()
         }
 
     companion object {
-        const val PREF_KEY_LAST_CAHCE_TIME = "PREF_KEY_LAST_CAHCE_TIME"
+        const val PREF_KEY_LAST_CACHE_TIME = "PREF_KEY_LAST_CACHE_TIME"
+        const val PREF_KEY_LAST_NEED_DOWNLOAD = "PREF_KEY_LAST_NEED_DOWNLOAD"
     }
 }

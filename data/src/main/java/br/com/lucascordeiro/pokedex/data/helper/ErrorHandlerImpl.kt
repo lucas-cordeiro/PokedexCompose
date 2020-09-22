@@ -4,6 +4,7 @@ import br.com.lucascordeiro.pokedex.domain.helper.ErrorHandler
 import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import io.ktor.client.features.*
 import io.ktor.http.*
+import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 
 class ErrorHandlerImpl : ErrorHandler {
@@ -17,6 +18,7 @@ class ErrorHandlerImpl : ErrorHandler {
                     else -> ErrorEntity.ApiError.Unknown
                 }
             }
+            is UnknownHostException ->  ErrorEntity.ApiError.Network
             is UnresolvedAddressException -> ErrorEntity.ApiError.Network
             else -> ErrorEntity.App.Unknown
         }

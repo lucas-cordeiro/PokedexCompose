@@ -1,19 +1,21 @@
 package br.com.lucascordeiro.pokedex.compose.ui.home
 
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.viewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.ui.tooling.preview.Preview
+import br.com.lucascordeiro.pokedex.compose.di.component.PokedexComponent
 import br.com.lucascordeiro.pokedex.compose.ui.components.StaggeredVerticalGrid
+import br.com.lucascordeiro.pokedex.compose.ui.splash.SplashViewModel
 import br.com.lucascordeiro.pokedex.compose.ui.theme.*
 
 @Composable

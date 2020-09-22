@@ -44,9 +44,6 @@ class PokedexViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
                 loading = true
                 loadingMoreItems = true
                 useCase.doGetMorePokemon(count)
-                delay(200)
-                loading = false
-                loadingMoreItems = false
             }
         }
     }
@@ -55,32 +52,26 @@ class PokedexViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
         Log.d("BUG", "init")
         viewModelScope.launch {
             useCase.doGetPokemon()
-                .collect {
-                    when (it) {
-                        is Result.Success -> {
-                            if(it.data.size - pokemons.size >= DEFAULT_LIMIT){
+                    .collect {
+                        when (it) {
+                            is Result.Success -> {
                                 loading = false
                                 loadingMoreItems = false
+                                pokemons = it.data
                             }
-                            pokemons = it.data
-                        }
-                        is Result.Error -> {
-                            when (it.error) {
-                                is ErrorEntity.ApiError.Network -> {
-                                    _errorMessage.value =
-                                        "Falha na conexão com a internet, verifique e tente novamente"
+                            is Result.Error -> {
+                                when (it.error) {
+                                    is ErrorEntity.ApiError.Network -> {
+                                        _errorMessage.value =
+                                                "Falha na conexão com a internet, verifique e tente novamente"
+                                    }
+                                    else ->
+                                        _errorMessage.value =
+                                                "Ocorreu um erro, tente novamente"
                                 }
-                                else ->
-                                    _errorMessage.value =
-                                        "Ocorreu um erro, tente novamente"
                             }
                         }
                     }
-                }
-        }
-
-        viewModelScope.launch(IO) {
-            useCase.doRefresh()
         }
     }
 }

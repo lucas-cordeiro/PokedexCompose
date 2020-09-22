@@ -8,6 +8,7 @@ import androidx.compose.runtime.savedinstancestate.rememberSavedInstanceState
 import br.com.lucascordeiro.pokedex.compose.ui.home.Home
 import br.com.lucascordeiro.pokedex.compose.ui.pokedex.Pokedex
 import br.com.lucascordeiro.pokedex.compose.ui.pokedetail.PokemonDetail
+import br.com.lucascordeiro.pokedex.compose.ui.splash.Splash
 import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
 import br.com.lucascordeiro.pokedex.compose.ui.utils.Navigator
 import br.com.lucascordeiro.pokedex.compose.ui.utils.SharedElementsRoot
@@ -17,7 +18,7 @@ fun PokedexApp(backPressedDispatcher: OnBackPressedDispatcher) {
     val navigator: Navigator<Destination> = rememberSavedInstanceState(
         saver = Navigator.saver<Destination>(backPressedDispatcher)
     ) {
-        Navigator(Destination.Home, backPressedDispatcher)
+        Navigator(Destination.Splash, backPressedDispatcher)
     }
 
     val actions = remember(navigator) { Actions(navigator) }
@@ -27,10 +28,16 @@ fun PokedexApp(backPressedDispatcher: OnBackPressedDispatcher) {
                 current = navigator.current
             ) { destination ->
                 when (destination) {
+                    Destination.Splash -> Splash(
+                            openHome = actions.openHome
+                    )
                     Destination.Home -> Home(
                             openPokedex = actions.openPokedex
                     )
-                    Destination.Pokedex -> Pokedex(onPokemonSelected = actions.selectPokemon, upPress = actions.upPress)
+                    Destination.Pokedex -> Pokedex(
+                            onPokemonSelected = actions.selectPokemon,
+                            upPress = actions.upPress
+                    )
                     is Destination.PokemonDetail -> {
                         PokemonDetail(
                             pokemonBasic = destination.pokemonBasic,

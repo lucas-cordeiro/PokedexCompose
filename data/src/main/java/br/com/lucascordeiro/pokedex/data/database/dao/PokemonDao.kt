@@ -11,6 +11,9 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon ORDER BY pokemonId LIMIT :limit OFFSET :offset")
     fun getAll(limit: Long, offset: Long): Flow<List<PokemonEntity>>
 
+    @Query("SELECT pokemonId FROM pokemon ORDER BY pokemonId")
+    suspend fun getAllIds(): List<Long>
+
     @Query("SELECT * FROM pokemon WHERE pokemonId = :pokemonId")
     fun getById(pokemonId: Long): Flow<PokemonEntity>
 
@@ -19,6 +22,9 @@ interface PokemonDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(join: PokemonCrossTypeEntity)
+
+    @Query("SELECT COUNT(*) FROM pokemon")
+    suspend fun count(): Long
 
     @Transaction
     @Query("SELECT * FROM pokemoncrosstypeentity WHERE pokemonId = :pokemonId")
