@@ -17,9 +17,6 @@ sealed class Destination : Parcelable {
     @Parcelize
     object Home : Destination()
 
-    @Parcelize
-    object Splash : Destination()
-
     @Immutable
     @Parcelize
     data class PokemonDetail(val pokemonBasic: @RawValue Pokemon) : Destination()

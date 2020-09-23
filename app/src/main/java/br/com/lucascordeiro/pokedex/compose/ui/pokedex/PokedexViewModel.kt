@@ -9,16 +9,20 @@ import androidx.lifecycle.viewModelScope
 import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
-import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonsUseCase
 import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.flowOn
 
-class PokedexViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
+class PokedexViewModel(private val useCase: GetPokemonsUseCase) : ViewModel() {
+
+    private var currentLimit = DEFAULT_LIMIT
+    private var currentJob: Job? = null
+
     var pokemons: List<Pokemon> by mutableStateOf(listOf())
         private set
 
@@ -43,35 +47,44 @@ class PokedexViewModel(private val useCase: GetPokemonUseCase) : ViewModel() {
             viewModelScope.launch(IO) {
                 loading = true
                 loadingMoreItems = true
-                useCase.doGetMorePokemon(count)
+                currentLimit += count
+                loadData()
             }
+        }
+    }
+
+    private fun loadData(){
+        currentJob?.cancel()
+        currentJob = viewModelScope.launch {
+            Log.d("BUG","currentLimit: $currentLimit")
+            useCase.doGetPokemons(offset = 0, limit = currentLimit)
+                .flowOn(IO)
+                .collect {
+                    when (it) {
+                        is Result.Success -> {
+                            Log.d("BUG","collect: ${it.data.size} currentLimit: $currentLimit")
+                            loading = false
+                            loadingMoreItems = false
+                            pokemons = it.data
+                        }
+                        is Result.Error -> {
+                            when (it.error) {
+                                is ErrorEntity.ApiError.Network -> {
+                                    _errorMessage.value =
+                                        "Falha na conexão com a internet, verifique e tente novamente"
+                                }
+                                else ->
+                                    _errorMessage.value =
+                                        "Ocorreu um erro, tente novamente"
+                            }
+                        }
+                    }
+                }
         }
     }
 
     init {
         Log.d("BUG", "init")
-        viewModelScope.launch {
-            useCase.doGetPokemon()
-                    .collect {
-                        when (it) {
-                            is Result.Success -> {
-                                loading = false
-                                loadingMoreItems = false
-                                pokemons = it.data
-                            }
-                            is Result.Error -> {
-                                when (it.error) {
-                                    is ErrorEntity.ApiError.Network -> {
-                                        _errorMessage.value =
-                                                "Falha na conexão com a internet, verifique e tente novamente"
-                                    }
-                                    else ->
-                                        _errorMessage.value =
-                                                "Ocorreu um erro, tente novamente"
-                                }
-                            }
-                        }
-                    }
-        }
+        loadData()
     }
 }

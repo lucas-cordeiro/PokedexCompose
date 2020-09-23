@@ -11,11 +11,11 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon ORDER BY pokemonId LIMIT :limit OFFSET :offset")
     fun getAll(limit: Long, offset: Long): Flow<List<PokemonEntity>>
 
-    @Query("SELECT pokemonId FROM pokemon ORDER BY pokemonId")
-    suspend fun getAllIds(): List<Long>
+    @Query("SELECT pokemonId FROM pokemon ORDER BY pokemonId LIMIT :limit OFFSET :offset")
+    suspend fun getAllIds(limit: Long, offset: Long): List<Long>
 
     @Query("SELECT * FROM pokemon WHERE pokemonId = :pokemonId")
-    fun getById(pokemonId: Long): Flow<PokemonEntity>
+    fun getById(pokemonId: Long): Flow<PokemonEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(list: List<PokemonEntity>)

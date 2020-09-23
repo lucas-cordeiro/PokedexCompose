@@ -8,9 +8,9 @@ import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 
 interface PokemonMapper {
-    fun providePokemonNetworkMapper(): Mapper<PokemonNetwork, Pokemon>
+    fun providePokemonNetworkMapper(): Mapper<PokemonNetwork?, Pokemon?>
 
-    fun providePokemonEntityToPokemonMapper(): Mapper<PokemonEntity, Pokemon>
+    fun providePokemonEntityToPokemonMapper(): Mapper<PokemonEntity?, Pokemon?>
 
     fun providePokemonToPokemonEntityMapper(): Mapper<Pokemon, PokemonEntity>
 

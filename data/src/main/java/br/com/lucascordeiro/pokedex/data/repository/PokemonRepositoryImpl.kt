@@ -13,9 +13,7 @@ import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
 import br.com.lucascordeiro.pokedex.domain.utils.TOTAL_POKEMON_COUNT
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 
 class PokemonRepositoryImpl(
     private val pokemonApiClient: PokemonApiClient,
@@ -25,102 +23,60 @@ class PokemonRepositoryImpl(
     private val preferenceController: PreferenceController
 ) : PokemonRepository {
 
-    override suspend fun doGetNeedDownloadData(): Boolean {
-        return !preferenceController.needDownload
+    override suspend fun doGetPokemonByIdFromDatabase(pokemonId: Long) = pokemonDao.getById(pokemonId).map {
+        pokemonMapper.providePokemonEntityToPokemonMapper().map(it)
     }
 
-    override suspend fun doUpdateNeedDownloadData(needDownloadData: Boolean) {
-        preferenceController.needDownload = !needDownloadData
-    }
-
-    override suspend fun doUpdateLastCacheUpdate(time: Long) {
-        preferenceController.lastCacheTime = time
-    }
-
-    override fun doGetPokemonFromDatabase(limit: Long, offset: Long): Flow<List<Pokemon>> {
-        return pokemonDao.getAll(offset = offset, limit = limit).map {
-            it.map { pokemonEntity ->
-                val relation =
-                    pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId)
-                        .map { pokemonCrossType ->
-                            pokemonTypeDao.getById(pokemonCrossType.typeId).first()
-                        }
-                pokemonEntity.types = relation
-                pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)
-            }
-        }
-    }
-
-    override fun doGetPokemonByIdFromDatabase(pokemonId: Long) = pokemonDao.getById(pokemonId)
-        .map { pokemonEntity ->
-            val relation = pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId)
-                .map { pokemonCrossType ->
-                    pokemonTypeDao.getById(pokemonCrossType.typeId).first()
-                }
-            pokemonEntity.types = relation
-            pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)
-        }
-
-    override suspend fun doGetPokemonFromNetwork(limit: Long, offset: Long): List<Pokemon> {
-
-        val response = pokemonApiClient.doGetPokemon(offset = offset, limit = limit).results.orEmpty()
-        return response.map { pokemonNetwork ->
-            pokemonNetwork.apply {
-                id = url?.toUri()?.lastPathSegment?.toLong()
-            }
-            val pokemon = pokemonMapper.providePokemonNetworkMapper().map(pokemonNetwork)
-            val pokemonById = pokemonApiClient.doGetPokemonById(pokemon.id)
-
-            pokemon.type =
-                    pokemonById.types?.filter { it.type != null }?.map { pokemonTypeNetwork ->
-                        PokemonType.valueOf(pokemonTypeNetwork.type?.name?.toUpperCase()
-                                ?: "NORMAL")
-                    }.orEmpty()
-            pokemon
-        }
-    }
-
-    override suspend fun doGetPokemonByIdFromNetwork(pokemonId: Long) : Pokemon {
-        val pokemonNetwork = pokemonApiClient.doGetPokemonById(pokemonId)
-        pokemonNetwork.apply {
+    override suspend fun doGetPokemonByIdFromNetwork(pokemonId: Long) = pokemonApiClient.doGetPokemonById(pokemonId).map {
+        pokemonMapper.providePokemonNetworkMapper().map(it?.apply {
             id = pokemonId
-        }
-        val pokemon = pokemonMapper.providePokemonNetworkMapper().map(pokemonNetwork)
-        println("BUG doGetPokemonByIdFromNetwork: $pokemon")
-        pokemon.type =
-                pokemonNetwork.types?.filter { it.type != null }?.map { pokemonTypeNetwork ->
-                    PokemonType.valueOf(pokemonTypeNetwork.type?.name?.toUpperCase()
-                            ?: "NORMAL")
-                }.orEmpty()
-        return pokemon
+        })
     }
 
-    override suspend fun doGetPokemonCount() = pokemonDao.count()
-
-    override suspend fun doGetPokemonIdsFromDatabase() = pokemonDao.getAllIds()
-
-    override suspend fun doGetPokemonIdsFromNetwork() = pokemonApiClient.doGetPokemon(0, TOTAL_POKEMON_COUNT).results?.map { it.url?.toUri()?.lastPathSegment?.toLong()?:0L }?: emptyList()
-
-    override suspend fun doInsertPokemonDatabase(list: List<Pokemon>) {
-        pokemonDao.insertAll(
-            list.map {
-                it.type.forEach { pokemonType ->
-                    val type =
-                        pokemonMapper.providePokemonTypeToPokemonTypeEntityMapper().map(pokemonType)
-                    var pokemonTypeId = pokemonTypeDao.insert(type)
-                    if (pokemonTypeId == -1L) {
-                        pokemonTypeId =
-                            pokemonTypeDao.getByName(type.name ?: "").first().typeId ?: 0L
+    override suspend fun doGetPokemonsFromDatabase(offset: Long, limit: Long) = pokemonDao.getAll(offset = offset, limit = limit).map { pokemons->
+        pokemons.map { pokemonEntity ->
+            val relation =
+                pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId)
+                    .map { pokemonCrossType ->
+                        pokemonTypeDao.getById(pokemonCrossType.typeId).first()
                     }
-                    pokemonDao.insert(
-                        PokemonCrossTypeEntity(
-                            pokemonId = it.id,
-                            typeId = pokemonTypeId
-                        )
-                    )
-                }
-                pokemonMapper.providePokemonToPokemonEntityMapper().map(it)
+            pokemonEntity.types = relation
+            pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)!!
+        }
+    }
+
+    override suspend fun doGetPokemonsFromNetwork(offset: Long, limit: Long) = pokemonApiClient.doGetPokemon(offset = offset, limit = limit).map {result->
+        result.results?.map {pokemon ->
+            pokemonMapper.providePokemonNetworkMapper().map(pokemon.apply {
+                id = url?.toUri()?.lastPathSegment?.toLong()
+            })!!
+        }?: emptyList()
+    }
+
+    override suspend fun doGetPokemonsIdsFromDatabase(offset: Long, limit: Long) = flowOf(pokemonDao.getAllIds(offset = offset, limit = limit))
+
+    override suspend fun doInsertPokemonToDatabase(pokemon: Pokemon) {
+        pokemonDao.insertAll(listOf(pokemonMapper.providePokemonToPokemonEntityMapper().map(pokemon)))
+        pokemon.type.forEach { pokemonType ->
+            val type =
+                pokemonMapper.providePokemonTypeToPokemonTypeEntityMapper().map(pokemonType)
+            var pokemonTypeId = pokemonTypeDao.insert(type)
+            if (pokemonTypeId == -1L) {
+                pokemonTypeId =
+                    pokemonTypeDao.getByName(type.name ?: "").first().typeId ?: 0L
             }
-        )
+            pokemonDao.insert(
+                PokemonCrossTypeEntity(
+                    pokemonId = pokemon.id,
+                    typeId = pokemonTypeId
+                )
+            )
+        }
+    }
+
+    override suspend fun doBulkInsertPokemonToDatabase(pokemons: List<Pokemon>) {
+        pokemons.forEach { pokemon ->
+            doInsertPokemonToDatabase(pokemon)
+        }
     }
 }

@@ -10,28 +10,31 @@ import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 
 class PokemonMapperImpl : PokemonMapper {
-    override fun providePokemonNetworkMapper() = object : Mapper<PokemonNetwork, Pokemon> {
-        override fun map(input: PokemonNetwork): Pokemon {
-            Log.d("BUG","MAP: ${input.id}")
-            return Pokemon(
-                id = input.id?:0L,
-                name = input.name ?: "",
-                type = listOf(PokemonType.NORMAL),
-                imageUrl = "https://raw.githubusercontent.com" +
-                        "/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork" +
-                        "/${ input.id}.png"
-            )
+    override fun providePokemonNetworkMapper() = object : Mapper<PokemonNetwork?, Pokemon?> {
+        override fun map(input: PokemonNetwork?): Pokemon? {
+            return if(input!=null){
+                Pokemon(
+                    id = input.id?:0L,
+                    name = input.name ?: "",
+                    type = listOf(PokemonType.NORMAL),
+                    imageUrl = "https://raw.githubusercontent.com" +
+                            "/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork" +
+                            "/${ input.id}.png"
+                )
+            }else null
         }
     }
 
-    override fun providePokemonEntityToPokemonMapper() = object : Mapper<PokemonEntity, Pokemon> {
-        override fun map(input: PokemonEntity): Pokemon {
-            return Pokemon(
-                id = input.pokemonId,
-                name = input.name,
-                type = input.types?.map { providePokemonTypeEntityToPokemonTypeMapper().map(it) }.orEmpty(),
-                imageUrl = input.imageUrl
-            )
+    override fun providePokemonEntityToPokemonMapper() = object : Mapper<PokemonEntity?, Pokemon?> {
+        override fun map(input: PokemonEntity?): Pokemon? {
+            return if(input!=null){
+                Pokemon(
+                    id = input.pokemonId,
+                    name = input.name,
+                    type = input.types?.map { providePokemonTypeEntityToPokemonTypeMapper().map(it) }.orEmpty(),
+                    imageUrl = input.imageUrl
+                )
+            }else null
         }
     }
 

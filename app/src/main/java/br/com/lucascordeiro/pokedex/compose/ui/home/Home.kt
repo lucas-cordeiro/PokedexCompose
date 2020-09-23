@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.ui.tooling.preview.Preview
 import br.com.lucascordeiro.pokedex.compose.di.component.PokedexComponent
 import br.com.lucascordeiro.pokedex.compose.ui.components.StaggeredVerticalGrid
-import br.com.lucascordeiro.pokedex.compose.ui.splash.SplashViewModel
 import br.com.lucascordeiro.pokedex.compose.ui.theme.*
 
 @Composable
