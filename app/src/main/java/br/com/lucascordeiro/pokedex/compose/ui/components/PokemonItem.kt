@@ -10,8 +10,10 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.drawLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
@@ -114,10 +116,11 @@ fun PokemonView(
             )
             PokemonLike(
                     pokemonId = pokemon.id,
+                    iconColor = if (MaterialTheme.colors.isLight) Color.White else pokemonTypeTheme.colorDark,
                     like = pokemon.like,
                     updateLike = updateLike,
                     modifier = Modifier
-                            .preferredHeight(24.dp)
+                            .preferredHeight(18.dp)
                             .constrainAs(like) {
                                 start.linkTo(parent.start)
                                 bottom.linkTo(parent.bottom)
@@ -230,6 +233,7 @@ fun PokemonType(
 @Composable
 fun PokemonLike(
         pokemonId: Long,
+        iconColor: Color,
         like: Boolean,
         updateLike: (Long, Boolean) -> Unit,
         modifier: Modifier = Modifier
@@ -238,11 +242,12 @@ fun PokemonLike(
         IconButton(
                 onClick = {
                     updateLike(pokemonId, !like)
-                }
+                },
+                modifier = Modifier.preferredSize(18.dp)
         ) {
             Icon(
                     asset = if (like) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    tint = MaterialTheme.colors.primary,
+                    tint = iconColor,
             )
         }
     }
