@@ -28,6 +28,7 @@ fun PokemonCollection(
     setScrollPosition: (Float) -> Unit,
     pokemons: List<Pokemon>,
     loadMoreItems: () -> Unit,
+    updateLike: (Long, Boolean) -> Unit,
     loading: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -35,49 +36,50 @@ fun PokemonCollection(
 
     scrollState.scrollTo(scrollPosition())
 
-        ScrollableColumn(
+    ScrollableColumn(
             scrollState = scrollState,
             modifier = modifier.fillMaxSize()
-        ) {
-            StaggeredVerticalGrid(
+    ) {
+        StaggeredVerticalGrid(
                 maxColumnWidth = 220.dp,
                 modifier = Modifier.fillMaxHeight().padding(4.dp)
-            ) {
-                pokemons.forEach { pokemon ->
-                    PokemonItem(
+        ) {
+            pokemons.forEach { pokemon ->
+                PokemonItem(
                         scrollState = scrollState,
                         setPosition = setScrollPosition,
                         onPokemonSelected = onPokemonSelected,
                         modifier = Modifier,
+                        updateLike = updateLike,
                         pokemon = pokemon
-                    )
-                }
+                )
             }
+        }
 
-            Button(
+        Button(
                 onClick = {
                     setScrollPosition(scrollState.value)
                     loadMoreItems()
                 },
                 modifier = Modifier
-                    .padding(0.dp, 8.dp)
-                    .drawOpacity(if (loading) 0f else 1f),
+                        .padding(0.dp, 8.dp)
+                        .drawOpacity(if (loading) 0f else 1f),
                 backgroundColor = MaterialTheme.colors.background
-            ) {
-                Text(
+        ) {
+            Text(
                     text = "Carregar mais",
                     style = TextStyle(
-                        color = MaterialTheme.colors.primary,
-                        fontWeight = FontWeight.Bold
+                            color = MaterialTheme.colors.primary,
+                            fontWeight = FontWeight.Bold
                     ),
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .fillMaxWidth(1f)
-                        .padding(4.dp)
+                            .fillMaxWidth(1f)
+                            .padding(4.dp)
 
-                )
-            }
+            )
         }
+    }
 }
 
 @Preview
@@ -87,12 +89,13 @@ fun PreviewPokemonList() {
         SharedElementsRoot {
             Surface(contentColor = contentColor()) {
                 PokemonCollection(
-                    setScrollPosition = {},
-                    scrollPosition = { 1f },
-                    pokemons = remember { generateList() },
-                    onPokemonSelected = {},
-                    loadMoreItems = {},
-                    loading = false
+                        setScrollPosition = {},
+                        scrollPosition = { 1f },
+                        pokemons = remember { generateList() },
+                        onPokemonSelected = {},
+                        loadMoreItems = {},
+                        updateLike = { _, _ -> },
+                        loading = false
                 )
             }
         }

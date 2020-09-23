@@ -1,5 +1,6 @@
 package br.com.lucascordeiro.pokedex.data.repository
 
+import android.util.Log
 import androidx.core.net.toUri
 import br.com.lucascordeiro.pokedex.data.database.dao.PokemonDao
 import br.com.lucascordeiro.pokedex.data.database.dao.PokemonTypeDao
@@ -23,8 +24,16 @@ class PokemonRepositoryImpl(
     private val preferenceController: PreferenceController
 ) : PokemonRepository {
 
-    override suspend fun doGetPokemonByIdFromDatabase(pokemonId: Long) = pokemonDao.getById(pokemonId).map {
-        pokemonMapper.providePokemonEntityToPokemonMapper().map(it)
+    override suspend fun doGetPokemonByIdFromDatabase(pokemonId: Long) = pokemonDao.getById(pokemonId).map { pokemonEntity ->
+       if(pokemonEntity!=null){
+           val relation =
+                   pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId)
+                           .map { pokemonCrossType ->
+                               pokemonTypeDao.getById(pokemonCrossType.typeId).first()
+                           }
+           pokemonEntity.types = relation
+           pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)
+       }else null
     }
 
     override suspend fun doGetPokemonByIdFromNetwork(pokemonId: Long) = pokemonApiClient.doGetPokemonById(pokemonId).map {
@@ -57,6 +66,7 @@ class PokemonRepositoryImpl(
 
     override suspend fun doInsertPokemonToDatabase(pokemon: Pokemon) {
         pokemonDao.insertAll(listOf(pokemonMapper.providePokemonToPokemonEntityMapper().map(pokemon)))
+        Log.d("BUG","PokemonId: ${pokemon.id} Type: ${pokemon.type}")
         pokemon.type.forEach { pokemonType ->
             val type =
                 pokemonMapper.providePokemonTypeToPokemonTypeEntityMapper().map(pokemonType)
@@ -73,6 +83,11 @@ class PokemonRepositoryImpl(
             )
         }
     }
+
+    override suspend fun doUpdateLikePokemonById(pokemonId: Long, like: Boolean) = pokemonDao.updateLikeByPokemonId(
+            pokemonId = pokemonId,
+            like = like
+    )
 
     override suspend fun doBulkInsertPokemonToDatabase(pokemons: List<Pokemon>) {
         pokemons.forEach { pokemon ->

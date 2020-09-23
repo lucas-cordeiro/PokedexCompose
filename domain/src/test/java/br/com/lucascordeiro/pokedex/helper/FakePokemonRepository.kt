@@ -12,7 +12,7 @@ class FakePokemonRepository : PokemonRepository {
     private val pokemonNetWork = doGetFakeDataNetwork()
 
     override suspend fun doGetPokemonByIdFromDatabase(pokemonId: Long) =
-        flowOf(pokemonDatabaseState.value.firstOrNull { it.id == pokemonId })
+            pokemonDatabaseState.map { it.firstOrNull { it.id == pokemonId } }
 
     override suspend fun doGetPokemonByIdFromNetwork(pokemonId: Long) =
         flowOf(pokemonNetWork.firstOrNull { it.id == pokemonId })
@@ -28,5 +28,17 @@ class FakePokemonRepository : PokemonRepository {
         val tempList = pokemonDatabase.value.toMutableList()
         tempList.add(pokemon)
         pokemonDatabase.value = tempList
+    }
+
+    override suspend fun doBulkInsertPokemonToDatabase(pokemons: List<Pokemon>) {
+        val tempList = pokemonDatabase.value.toMutableList()
+        tempList.addAll(pokemons)
+        pokemonDatabase.value = tempList
+    }
+
+    override suspend fun doUpdateLikePokemonById(pokemonId: Long, like: Boolean) {
+        val tempList = pokemonDatabase.value.toMutableList()
+        tempList[tempList.indexOfFirst { it.id == pokemonId }].like = like
+        pokemonDatabase.value =tempList
     }
 }

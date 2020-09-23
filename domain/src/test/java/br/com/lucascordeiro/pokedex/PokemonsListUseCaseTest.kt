@@ -1,19 +1,18 @@
 package br.com.lucascordeiro.pokedex
 
 import br.com.lucascordeiro.pokedex.domain.model.Result
-import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonUseCaseImpl
+import br.com.lucascordeiro.pokedex.domain.usecase.PokemonListUseCaseImpl
 import br.com.lucascordeiro.pokedex.helper.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class GetPokemonUseCaseTest {
+class PokemonsListUseCaseTest {
 
     private val pokemonRepository = FakePokemonRepository()
 
-    private val useCase = GetPokemonUseCaseImpl(
+    private val useCase = PokemonListUseCaseImpl(
         pokemonRepository = pokemonRepository,
         errorHandler = FakeErrorHandler()
     )
@@ -29,7 +28,7 @@ class GetPokemonUseCaseTest {
     }
 
     @Test
-    fun isValidGetPokemonUseCase(){
+    fun isValidPokemonListUseCase(){
         runBlockingTest {
             val result = useCase.doGetPokemons(0,3).first()
             assertTrue(result is Result.Success)

@@ -9,7 +9,8 @@ import androidx.lifecycle.viewModelScope
 import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
-import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonsUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.PokemonDetailUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.PokemonsListUseCase
 import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 
-class PokedexViewModel(private val useCase: GetPokemonsUseCase) : ViewModel() {
+class PokedexViewModel(private val pokemonsListUseCase: PokemonsListUseCase,private val pokemonDetailUseCase: PokemonDetailUseCase) : ViewModel() {
 
     private var currentLimit = DEFAULT_LIMIT
     private var currentJob: Job? = null
@@ -35,6 +36,10 @@ class PokedexViewModel(private val useCase: GetPokemonsUseCase) : ViewModel() {
     private val _errorMessage: MutableStateFlow<String?> = MutableStateFlow(null)
     val errorMessage: StateFlow<String?>
         get() = _errorMessage
+
+    private val _showMessage: MutableStateFlow<String?> = MutableStateFlow(null)
+    val showMessage: StateFlow<String?>
+        get() = _showMessage
 
     private var loadingMoreItems = false
 
@@ -53,11 +58,24 @@ class PokedexViewModel(private val useCase: GetPokemonsUseCase) : ViewModel() {
         }
     }
 
+    fun doUpdateLikePokemon(pokemonId: Long, like: Boolean){
+        viewModelScope.launch {
+            when(pokemonDetailUseCase.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)){
+                is Result.Success -> {
+                    _showMessage.value = "${pokemons.find { it.id == pokemonId }?.name} Liked ❤️"
+                }
+                is Result.Error ->{
+                    _errorMessage.value = "Ocorreu um erro, tente novamente"
+                }
+            }
+        }
+    }
+
     private fun loadData(){
         currentJob?.cancel()
         currentJob = viewModelScope.launch {
             Log.d("BUG","currentLimit: $currentLimit")
-            useCase.doGetPokemons(offset = 0, limit = currentLimit)
+            pokemonsListUseCase.doGetPokemons(offset = 0, limit = currentLimit)
                 .flowOn(IO)
                 .collect {
                     when (it) {

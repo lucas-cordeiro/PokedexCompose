@@ -8,7 +8,7 @@ import br.com.lucascordeiro.pokedex.data.database.entity.PokemonCrossTypeEntity
 import br.com.lucascordeiro.pokedex.data.database.entity.PokemonEntity
 import br.com.lucascordeiro.pokedex.data.database.entity.PokemonTypeEntity
 
-@Database(entities = [PokemonEntity::class, PokemonTypeEntity::class, PokemonCrossTypeEntity::class], version = 4)
+@Database(entities = [PokemonEntity::class, PokemonTypeEntity::class, PokemonCrossTypeEntity::class], version = 5)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun pokemonDao(): PokemonDao
     abstract fun pokemonTypeDao(): PokemonTypeDao

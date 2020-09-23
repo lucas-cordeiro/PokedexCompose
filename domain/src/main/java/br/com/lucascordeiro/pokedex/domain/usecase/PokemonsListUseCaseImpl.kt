@@ -4,16 +4,12 @@ import br.com.lucascordeiro.pokedex.domain.helper.ErrorHandler
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
-import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
-import br.com.lucascordeiro.pokedex.domain.utils.TOTAL_POKEMON_COUNT
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 
-class GetPokemonUseCaseImpl(
+class PokemonListUseCaseImpl(
     private val pokemonRepository: PokemonRepository,
     private val errorHandler: ErrorHandler
-) : GetPokemonsUseCase {
+) : PokemonsListUseCase {
     override suspend fun doGetPokemons(offset: Long, limit: Long) = flow {
         val pokemonsFromNetwork =
             pokemonRepository.doGetPokemonsFromNetwork(offset = offset, limit = limit).first()
@@ -37,6 +33,7 @@ class GetPokemonUseCaseImpl(
         val data: Result<List<Pokemon>> = Result.Success(it)
         data
     }.catch {
+        it.printStackTrace()
         emit(Result.Error(errorHandler.getError(it)))
     }
 }

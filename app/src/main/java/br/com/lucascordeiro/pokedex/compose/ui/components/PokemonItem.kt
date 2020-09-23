@@ -4,6 +4,9 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,14 +31,16 @@ fun PokemonItem(
     setPosition: (Float) -> Unit,
     onPokemonSelected: (Pokemon) -> Unit,
     pokemon: Pokemon,
+    updateLike: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     PokemonView(
-        scrollState = scrollState,
-        setPosition = setPosition,
-        onPokemonSelected = onPokemonSelected,
-        pokemon = pokemon,
-        modifier = modifier
+            scrollState = scrollState,
+            pokemon = pokemon,
+            setPosition = setPosition,
+            onPokemonSelected = onPokemonSelected,
+            updateLike = updateLike,
+            modifier = modifier
     )
 }
 
@@ -44,6 +49,7 @@ fun PokemonView(
     scrollState: ScrollState,
     setPosition: (Float) -> Unit,
     onPokemonSelected: (Pokemon) -> Unit,
+    updateLike: (Long, Boolean) -> Unit,
     pokemon: Pokemon,
     modifier: Modifier = Modifier
 ) {
@@ -68,43 +74,54 @@ fun PokemonView(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 8.dp),
         ) {
-            val (pokemonName, pokemonTypes, pokemonId, pokemonImage) = createRefs()
+            val (pokemonName, pokemonTypes, pokemonId, pokemonImage, like) = createRefs()
             PokemonName(
-                pokemonId = pokemon.id,
-                name = pokemon.name,
-                textColor = if (MaterialTheme.colors.isLight) Color.White else pokemonTypeTheme.colorLight,
-                modifier = Modifier.constrainAs(pokemonName){
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                }
+                    pokemonId = pokemon.id,
+                    name = pokemon.name,
+                    textColor = if (MaterialTheme.colors.isLight) Color.White else pokemonTypeTheme.colorLight,
+                    modifier = Modifier.constrainAs(pokemonName) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                    }
             )
             Column(
-                modifier = Modifier.constrainAs(pokemonTypes){
-                    top.linkTo(pokemonName.bottom)
-                    start.linkTo(parent.start)
-                }
+                    modifier = Modifier.constrainAs(pokemonTypes) {
+                        top.linkTo(pokemonName.bottom)
+                        start.linkTo(parent.start)
+                    }
             ) {
                 pokemon.type.forEach {
                     PokemonType(type = it.type.capitalize(Locale.getDefault()))
                 }
             }
             PokemonId(
-                id = "#${pokemon.id.toString().padStart(3, '0')}",
-                color = if (MaterialTheme.colors.isLight) pokemonTypeTheme.colorDark else pokemonTypeTheme.colorLight.copy(
-                    alpha = 0.3f
-                ),
-                modifier = Modifier.constrainAs(pokemonId){
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                }
+                    id = "#${pokemon.id.toString().padStart(3, '0')}",
+                    color = if (MaterialTheme.colors.isLight) pokemonTypeTheme.colorDark else pokemonTypeTheme.colorLight.copy(
+                            alpha = 0.3f
+                    ),
+                    modifier = Modifier.constrainAs(pokemonId) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                    }
             )
             PokemonImage(
-                pokemonId = pokemon.id,
-                pokemonImage = pokemon.imageUrl,
-                modifier = Modifier.constrainAs(pokemonImage){
-                    top.linkTo(pokemonId.bottom)
-                    end.linkTo(parent.end)
-                }
+                    pokemonId = pokemon.id,
+                    pokemonImage = pokemon.imageUrl,
+                    modifier = Modifier.constrainAs(pokemonImage) {
+                        top.linkTo(pokemonId.bottom)
+                        end.linkTo(parent.end)
+                    }
+            )
+            PokemonLike(
+                    pokemonId = pokemon.id,
+                    like = pokemon.like,
+                    updateLike = updateLike,
+                    modifier = Modifier
+                            .preferredHeight(24.dp)
+                            .constrainAs(like) {
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                            }
             )
         }
     }
@@ -210,16 +227,38 @@ fun PokemonType(
     }
 }
 
+@Composable
+fun PokemonLike(
+        pokemonId: Long,
+        like: Boolean,
+        updateLike: (Long, Boolean) -> Unit,
+        modifier: Modifier = Modifier
+) {
+    SharedElement(tag = "${pokemonId}_Like", type = SharedElementType.FROM, modifier) {
+        IconButton(
+                onClick = {
+                    updateLike(pokemonId, !like)
+                }
+        ) {
+            Icon(
+                    asset = if (like) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    tint = MaterialTheme.colors.primary,
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun PreviewPokemonView() {
     PokedexComposeTheme(darkTheme = true) {
         SharedElementsRoot {
             PokemonItem(
-                scrollState = rememberScrollState(),
-                setPosition = {},
-                onPokemonSelected = {},
-                pokemon = remember { fakePokemon() }
+                    scrollState = rememberScrollState(),
+                    setPosition = {},
+                    onPokemonSelected = {},
+                    pokemon = remember { fakePokemon() },
+                    updateLike = {_, _ -> }
             )
         }
     }

@@ -13,6 +13,8 @@ data class PokemonEntity(
     var name: String = "",
     var url: String = "",
     var imageUrl: String = "",
+    @ColumnInfo(name = "isLike")
+    var isLike: Boolean = false,
     @Ignore
     var types: List<PokemonTypeEntity>? = null
 )

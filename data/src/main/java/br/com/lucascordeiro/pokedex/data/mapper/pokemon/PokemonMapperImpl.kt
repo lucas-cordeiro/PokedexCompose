@@ -12,38 +12,43 @@ import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 class PokemonMapperImpl : PokemonMapper {
     override fun providePokemonNetworkMapper() = object : Mapper<PokemonNetwork?, Pokemon?> {
         override fun map(input: PokemonNetwork?): Pokemon? {
-            return if(input!=null){
+            return if (input != null) {
                 Pokemon(
-                    id = input.id?:0L,
-                    name = input.name ?: "",
-                    type = listOf(PokemonType.NORMAL),
-                    imageUrl = "https://raw.githubusercontent.com" +
-                            "/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork" +
-                            "/${ input.id}.png"
+                        id = input.id ?: 0L,
+                        name = input.name ?: "",
+                        type = input.types?.filter { it.type != null }?.map { pokemonTypeNetwork ->
+                            PokemonType.valueOf(pokemonTypeNetwork.type?.name?.toUpperCase()
+                                    ?: "NORMAL")
+                        }.orEmpty(),
+                        imageUrl = "https://raw.githubusercontent.com" +
+                                "/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork" +
+                                "/${input.id}.png"
                 )
-            }else null
+            } else null
         }
     }
 
     override fun providePokemonEntityToPokemonMapper() = object : Mapper<PokemonEntity?, Pokemon?> {
         override fun map(input: PokemonEntity?): Pokemon? {
-            return if(input!=null){
+            return if (input != null) {
                 Pokemon(
-                    id = input.pokemonId,
-                    name = input.name,
-                    type = input.types?.map { providePokemonTypeEntityToPokemonTypeMapper().map(it) }.orEmpty(),
-                    imageUrl = input.imageUrl
+                        id = input.pokemonId,
+                        like = input.isLike,
+                        name = input.name,
+                        type = input.types?.map { providePokemonTypeEntityToPokemonTypeMapper().map(it) }.orEmpty(),
+                        imageUrl = input.imageUrl
                 )
-            }else null
+            } else null
         }
     }
 
     override fun providePokemonToPokemonEntityMapper() = object : Mapper<Pokemon, PokemonEntity> {
         override fun map(input: Pokemon): PokemonEntity {
             return PokemonEntity(
-                pokemonId = input.id,
-                name = input.name.toLowerCase(),
-                imageUrl = input.imageUrl
+                    pokemonId = input.id,
+                    isLike = input.like,
+                    name = input.name.toLowerCase(),
+                    imageUrl = input.imageUrl
             )
         }
     }
