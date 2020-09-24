@@ -49,13 +49,13 @@ PokedexCompose is still under development
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Project developed for studies using the pokemon public api
+Project developed for studies using the [PokeApi](https://pokeapi.co/), S.O.L.I.D, Clean Architecture, Repository Pattern and MVVM.
 
-## Original design
+### Original design
 
 [Pokedex App design](https://dribbble.com/shots/6545819-Pokedex-App) by [Saepul Nahwan](https://dribbble.com/saepulnahwan23)
 
-## Other Pokedex projects
+### Other Pokedex projects
 
 - [flutter_pokedex](https://github.com/scitbiz/flutter_pokedex/) by **Pham Sy Hung**
 - [Kotlin-Pokedex](https://github.com/mrcsxsiq/Kotlin-Pokedex) by **Marcos Paulo Farias**
@@ -65,6 +65,7 @@ Project developed for studies using the pokemon public api
 * [Jetpack Compose](https://developer.android.com/jetpack/compose?hl=pt-br)
 * [MVVM](https://developer.android.com/jetpack/guide)
 * [Coroutines](https://developer.android.com/kotlin/coroutines)
+* [StateFlow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-state-flow/)
 * [Room](https://developer.android.com/topic/libraries/architecture/room)
 * [Koin](https://insert-koin.io/)
 * [Ktor](https://ktor.io/clients/http-client/multiplatform.html)
