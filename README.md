@@ -20,7 +20,7 @@
 
 
 # PokedexCompose
-![License-MIT](https://img.shields.io/badge/License-MIT-red.svg)
+![Compose Version](https://img.shields.io/badge/Compose-1.0.0--alpha03-brightgreen)
 
 
 ### Status: 🚧 In progress 🚧
@@ -29,8 +29,9 @@ PokedexCompose is still under development
 
 ## Screenshots
 
-![](https://i.imgur.com/p5fm2yM.png)
-
+| | | |
+|:-------------------------:|:-------------------------:|:-------------------------:|
+|<img width="1604" alt="Home Dark" src="https://i.imgur.com/Rq7OiS7.png"> | <img width="1604" alt="Search Dark" src="https://i.imgur.com/9gzAuNv.png"> | <img width="1604" alt="Pokedex Dark" src="https://i.imgur.com/GVoHQmC.png"> |
 
 <!-- TABLE OF CONTENTS -->
 ## Contents
