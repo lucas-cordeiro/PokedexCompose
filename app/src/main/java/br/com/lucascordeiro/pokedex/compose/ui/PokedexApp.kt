@@ -28,7 +28,8 @@ fun PokedexApp(backPressedDispatcher: OnBackPressedDispatcher) {
             ) { destination ->
                 when (destination) {
                     Destination.Home -> Home(
-                            openPokedex = actions.openPokedex
+                            openPokedex = actions.openPokedex,
+                            onPokemonSelected = actions.selectPokemon,
                     )
                     Destination.Pokedex -> Pokedex(
                             onPokemonSelected = actions.selectPokemon,

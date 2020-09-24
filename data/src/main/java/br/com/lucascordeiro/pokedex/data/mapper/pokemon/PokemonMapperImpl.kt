@@ -8,6 +8,7 @@ import br.com.lucascordeiro.pokedex.data.mapper.Mapper
 import br.com.lucascordeiro.pokedex.data.network.model.PokemonNetwork
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.PokemonType
+import java.util.*
 
 class PokemonMapperImpl : PokemonMapper {
     override fun providePokemonNetworkMapper() = object : Mapper<PokemonNetwork?, Pokemon?> {
@@ -34,7 +35,7 @@ class PokemonMapperImpl : PokemonMapper {
                 Pokemon(
                         id = input.pokemonId,
                         like = input.isLike,
-                        name = input.name,
+                        name = input.name.capitalize(Locale.getDefault()),
                         type = input.types?.map { providePokemonTypeEntityToPokemonTypeMapper().map(it) }.orEmpty(),
                         imageUrl = input.imageUrl
                 )

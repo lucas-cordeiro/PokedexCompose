@@ -4,6 +4,7 @@ import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import kotlinx.coroutines.flow.Flow
 
 interface PokemonRepository {
+    suspend fun doSearchByPokemonNameFromDatabase(nameQuery: String, limit: Long): Flow<List<Pokemon>>
     suspend fun doUpdateLikePokemonById(pokemonId: Long, like: Boolean)
     suspend fun doInsertPokemonToDatabase(pokemon: Pokemon)
     suspend fun doBulkInsertPokemonToDatabase(pokemons: List<Pokemon>)

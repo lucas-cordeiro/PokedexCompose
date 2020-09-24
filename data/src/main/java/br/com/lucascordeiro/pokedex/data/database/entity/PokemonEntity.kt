@@ -1,9 +1,6 @@
 package br.com.lucascordeiro.pokedex.data.database.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity(tableName = "pokemon")
 data class PokemonEntity(

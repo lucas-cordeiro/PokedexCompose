@@ -41,4 +41,10 @@ class FakePokemonRepository : PokemonRepository {
         tempList[tempList.indexOfFirst { it.id == pokemonId }].like = like
         pokemonDatabase.value =tempList
     }
+
+    override suspend fun doSearchByPokemonNameFromDatabase(nameQuery: String) = pokemonDatabaseState.filter { pokemons ->
+        pokemons.filter { pokemon ->
+            pokemon.name.toLowerCase().startsWith(nameQuery)
+        }.isNotEmpty()
+    }
 }

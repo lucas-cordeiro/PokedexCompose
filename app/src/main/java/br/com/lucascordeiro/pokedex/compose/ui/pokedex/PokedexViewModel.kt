@@ -74,13 +74,11 @@ class PokedexViewModel(private val pokemonsListUseCase: PokemonsListUseCase,priv
     private fun loadData(){
         currentJob?.cancel()
         currentJob = viewModelScope.launch {
-            Log.d("BUG","currentLimit: $currentLimit")
             pokemonsListUseCase.doGetPokemons(offset = 0, limit = currentLimit)
                 .flowOn(IO)
                 .collect {
                     when (it) {
                         is Result.Success -> {
-                            Log.d("BUG","collect: ${it.data.size} currentLimit: $currentLimit")
                             loading = false
                             loadingMoreItems = false
                             pokemons = it.data
@@ -102,7 +100,6 @@ class PokedexViewModel(private val pokemonsListUseCase: PokemonsListUseCase,priv
     }
 
     init {
-        Log.d("BUG", "init")
         loadData()
     }
 }

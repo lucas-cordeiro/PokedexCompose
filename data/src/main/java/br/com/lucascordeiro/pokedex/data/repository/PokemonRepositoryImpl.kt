@@ -66,7 +66,6 @@ class PokemonRepositoryImpl(
 
     override suspend fun doInsertPokemonToDatabase(pokemon: Pokemon) {
         pokemonDao.insertAll(listOf(pokemonMapper.providePokemonToPokemonEntityMapper().map(pokemon)))
-        Log.d("BUG","PokemonId: ${pokemon.id} Type: ${pokemon.type}")
         pokemon.type.forEach { pokemonType ->
             val type =
                 pokemonMapper.providePokemonTypeToPokemonTypeEntityMapper().map(pokemonType)
@@ -81,6 +80,19 @@ class PokemonRepositoryImpl(
                     typeId = pokemonTypeId
                 )
             )
+        }
+    }
+
+    override suspend fun doSearchByPokemonNameFromDatabase(nameQuery: String, limit: Long) = pokemonDao.queryByName("${nameQuery}%", limit).map { pokemons->
+        Log.d("BUG","pokemons: $pokemons")
+        pokemons.map { pokemonEntity ->
+            val relation =
+                    pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId)
+                            .map { pokemonCrossType ->
+                                pokemonTypeDao.getById(pokemonCrossType.typeId).first()
+                            }
+            pokemonEntity.types = relation
+            pokemonMapper.providePokemonEntityToPokemonMapper().map(pokemonEntity)!!
         }
     }
 
