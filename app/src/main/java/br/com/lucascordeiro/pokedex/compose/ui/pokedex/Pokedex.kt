@@ -18,6 +18,7 @@ import br.com.lucascordeiro.pokedex.compose.ui.components.AnimatingLoading
 import br.com.lucascordeiro.pokedex.compose.ui.components.PokemonCollection
 import br.com.lucascordeiro.pokedex.compose.ui.components.TopBar
 import br.com.lucascordeiro.pokedex.compose.ui.theme.PokedexComposeTheme
+import br.com.lucascordeiro.pokedex.compose.ui.theme.grassLight
 import br.com.lucascordeiro.pokedex.compose.ui.utils.SharedElementsRoot
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.PokemonType
@@ -29,33 +30,37 @@ fun Pokedex(
     upPress: () -> Unit
 ) {
     val viewModel: PokedexViewModel = viewModel(
-            null,
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                    return PokedexViewModel(PokedexComponent().pokemonListUseCase, PokedexComponent().pokemonDetailUseCase) as T
-                }
+        null,
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return PokedexViewModel(
+                    PokedexComponent().pokemonListUseCase,
+                    PokedexComponent().pokemonDetailUseCase
+                ) as T
             }
+        }
     )
 
     PokedexScreen(
-            pokemons = viewModel.pokemons,
-            loading = viewModel.loading,
-            scrollPosition = {
-                viewModel.scrollPosition
-            },
-            setScrollPosition = {
-                viewModel.addScrollPosition(it)
-            },
-            updateLike = { pokemonId, like ->
-                viewModel.doUpdateLikePokemon(
-                        pokemonId = pokemonId,
-                        like = like
-                )
-            },
-            onPokemonSelected = onPokemonSelected,
-            loadMoreItems = {
-                viewModel.loadMoreItems(DEFAULT_LIMIT)
-            }
+        pokemons = viewModel.pokemons,
+        loading = viewModel.loading,
+        scrollPosition = {
+            viewModel.scrollPosition
+        },
+        setScrollPosition = {
+            viewModel.addScrollPosition(it)
+        },
+        updateLike = { pokemonId, like ->
+            viewModel.doUpdateLikePokemon(
+                pokemonId = pokemonId,
+                like = like
+            )
+        },
+        upPress = upPress,
+        onPokemonSelected = onPokemonSelected,
+        loadMoreItems = {
+            viewModel.loadMoreItems(DEFAULT_LIMIT)
+        }
     )
 }
 
@@ -65,6 +70,7 @@ fun PokedexScreen(
     scrollPosition: () -> Float,
     setScrollPosition: (Float) -> Unit,
     pokemons: List<Pokemon>,
+    upPress: () -> Unit,
     loadMoreItems: () -> Unit,
     loading: Boolean,
     updateLike: (Long, Boolean) -> Unit,
@@ -72,7 +78,11 @@ fun PokedexScreen(
 ) {
     Scaffold(
             topBar = {
-                TopBar(title = "Pokedex")
+                TopBar(
+                    title = "Pokedex",
+                    tint = grassLight,
+                    onBackClick = upPress
+                )
             }
     ) {
         Stack {
@@ -127,13 +137,14 @@ fun PreviewPokedexScreen() {
     PokedexComposeTheme(darkTheme = true) {
         SharedElementsRoot {
             PokedexScreen(
-                    pokemons = remember { generateList() },
-                    onPokemonSelected = {},
-                    loading = true,
-                    scrollPosition = { 1f },
-                    setScrollPosition = {},
-                    updateLike = { _, _ -> },
-                    loadMoreItems = {}
+                pokemons = remember { generateList() },
+                onPokemonSelected = {},
+                loading = true,
+                scrollPosition = { 1f },
+                setScrollPosition = {},
+                updateLike = { _, _ -> },
+                loadMoreItems = {},
+                upPress = {}
             )
         }
     }
