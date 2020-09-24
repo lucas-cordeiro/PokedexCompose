@@ -104,6 +104,9 @@ fun HomeScreen(
                                     top.linkTo(title.bottom, 20.dp)
                                     start.linkTo(parent.start)
                                     end.linkTo(parent.end)
+                                    if(pokemons.isNotEmpty()) {
+                                        bottom.linkTo(parent.bottom, 20.dp)
+                                    }
                                 }
                 )
 
@@ -148,7 +151,8 @@ fun HomeScreen(
                 loading = true,
                 scrollPosition = {0f},
                 updateLike = updateLike,
-                setScrollPosition = {}
+                setScrollPosition = {},
+                modifier = Modifier.padding(0.dp,20.dp)
         )
     }
 }
