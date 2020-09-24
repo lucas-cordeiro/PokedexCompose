@@ -14,6 +14,7 @@ val databaseModule = module {
             .fallbackToDestructiveMigration()
             .build()
     }
-    single { get<AppDatabase>().pokemonDao() }
-    single { get<AppDatabase>().pokemonTypeDao() }
+    factory { get<AppDatabase>().pokemonDao() }
+    factory { get<AppDatabase>().pokemonTypeDao() }
+    factory { get<AppDatabase>().pokemonSimpleDao() }
 }

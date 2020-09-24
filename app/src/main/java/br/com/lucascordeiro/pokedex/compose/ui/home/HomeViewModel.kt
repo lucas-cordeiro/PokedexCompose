@@ -11,12 +11,17 @@ import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.usecase.PokemonDetailUseCase
 import br.com.lucascordeiro.pokedex.domain.usecase.PokemonSearchUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.SaveSimplePokemonUseCase
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class HomeViewModel(private val pokemonSearchUseCase: PokemonSearchUseCase, private val pokemonDetailUseCase: PokemonDetailUseCase) : ViewModel() {
+class HomeViewModel(
+        private val pokemonSearchUseCase: PokemonSearchUseCase,
+        private val pokemonDetailUseCase: PokemonDetailUseCase,
+        private val saveSimplePokemonUseCase: SaveSimplePokemonUseCase
+) : ViewModel() {
 
     private var jobSearch: Job? = null
 
@@ -57,6 +62,9 @@ class HomeViewModel(private val pokemonSearchUseCase: PokemonSearchUseCase, priv
     }
 
     init {
+        viewModelScope.launch(IO) {
+            saveSimplePokemonUseCase.doSaveSimplePokemon()
+        }
         viewModelScope.launch {
             _query
                     .buffer()
@@ -71,36 +79,36 @@ class HomeViewModel(private val pokemonSearchUseCase: PokemonSearchUseCase, priv
                     }
                     .debounce(500)
                     .collect {query->
-                        Log.d("BUG","query: $query")
-
-                        loading = true
                         jobSearch?.cancel()
-                        jobSearch = viewModelScope.launch {
-                            pokemonSearchUseCase
-                                    .doPokemonSearchByName(query, limit = 4)
-                                    .flowOn(IO)
-                                    .collect {
-                                        loading = false
-                                        when (it) {
-                                            is Result.Success -> {
-                                                pokemons = if(this@HomeViewModel.query.isNotBlank())
-                                                    it.data
-                                                else
-                                                    emptyList()
-                                            }
-                                            is Result.Error -> {
-                                                when (it.error) {
-                                                    is ErrorEntity.ApiError.Network -> {
-                                                        _errorMessage.value =
-                                                                "Falha na conexão com a internet, verifique e tente novamente"
+                        if(this@HomeViewModel.query.isNotBlank()) {
+                            loading = true
+                            jobSearch = viewModelScope.launch {
+                                pokemonSearchUseCase
+                                        .doPokemonSearchByName(query, limit = 4)
+                                        .flowOn(IO)
+                                        .collect {
+                                            loading = false
+                                            when (it) {
+                                                is Result.Success -> {
+                                                    pokemons = if (this@HomeViewModel.query.isNotBlank())
+                                                        it.data
+                                                    else
+                                                        emptyList()
+                                                }
+                                                is Result.Error -> {
+                                                    when (it.error) {
+                                                        is ErrorEntity.ApiError.Network -> {
+                                                            _errorMessage.value =
+                                                                    "Falha na conexão com a internet, verifique e tente novamente"
+                                                        }
+                                                        else ->
+                                                            _errorMessage.value =
+                                                                    "Ocorreu um erro, tente novamente"
                                                     }
-                                                    else ->
-                                                        _errorMessage.value =
-                                                                "Ocorreu um erro, tente novamente"
                                                 }
                                             }
                                         }
-                                    }
+                            }
                         }
             }
         }
