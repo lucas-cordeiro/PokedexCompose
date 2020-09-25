@@ -6,5 +6,4 @@ import kotlinx.coroutines.flow.Flow
 
 interface PokemonDetailUseCase {
     fun doGetPokmeonById(pokemonId: Long): Flow<Result<Pokemon>>
-    suspend fun doUpdateLikePokemonById(pokemonId: Long, like: Boolean) : Result<Unit>
 }

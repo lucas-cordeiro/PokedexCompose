@@ -27,14 +27,4 @@ class PokemonDetailUseCaseImpl(
         it.printStackTrace()
         emit(Result.Error(errorHandler.getError(it)))
     }
-
-    override suspend fun doUpdateLikePokemonById(pokemonId: Long, like: Boolean) : Result<Unit> {
-        return try{
-            pokemonRepository.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)
-            Result.Success(Unit)
-        }catch (t: Throwable){
-            t.printStackTrace()
-            Result.Error(errorHandler.getError(t))
-        }
-    }
 }

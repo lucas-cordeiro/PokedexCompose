@@ -10,6 +10,7 @@ import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.usecase.PokemonDetailUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.PokemonLikeUseCase
 import br.com.lucascordeiro.pokedex.domain.usecase.PokemonsListUseCase
 import br.com.lucascordeiro.pokedex.domain.utils.DEFAULT_LIMIT
 import kotlinx.coroutines.*
@@ -19,7 +20,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 
-class PokedexViewModel(private val pokemonsListUseCase: PokemonsListUseCase,private val pokemonDetailUseCase: PokemonDetailUseCase) : ViewModel() {
+class PokedexViewModel(
+        private val pokemonsListUseCase: PokemonsListUseCase,
+        private val pokemonDetailUseCase: PokemonDetailUseCase,
+        private val pokemonLikeUseCase: PokemonLikeUseCase
+) : ViewModel() {
 
     private var currentLimit = DEFAULT_LIMIT
     private var currentJob: Job? = null
@@ -60,7 +65,7 @@ class PokedexViewModel(private val pokemonsListUseCase: PokemonsListUseCase,priv
 
     fun doUpdateLikePokemon(pokemonId: Long, like: Boolean){
         viewModelScope.launch {
-            when(pokemonDetailUseCase.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)){
+            when(pokemonLikeUseCase.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)){
                 is Result.Success -> {
                     _showMessage.value = "${pokemons.find { it.id == pokemonId }?.name} Liked ❤️"
                 }

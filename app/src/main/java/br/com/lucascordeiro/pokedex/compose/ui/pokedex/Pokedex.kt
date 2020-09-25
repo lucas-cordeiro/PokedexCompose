@@ -34,8 +34,9 @@ fun Pokedex(
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 return PokedexViewModel(
-                    PokedexComponent().pokemonListUseCase,
-                    PokedexComponent().pokemonDetailUseCase
+                        PokedexComponent().pokemonListUseCase,
+                        PokedexComponent().pokemonDetailUseCase,
+                        PokedexComponent().pokemonLikeUseCase,
                 ) as T
             }
         }
