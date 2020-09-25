@@ -7,7 +7,7 @@ import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel { PokedexViewModel(get(),get()) }
-    viewModel { PokemonDetailViewModel(get()) }
-    viewModel { HomeViewModel(get(),get(), get()) }
+    viewModel { PokedexViewModel(get(),get(), get()) }
+    viewModel { PokemonDetailViewModel(get(), get()) }
+    viewModel { HomeViewModel(get(),get(), get(), get()) }
 }

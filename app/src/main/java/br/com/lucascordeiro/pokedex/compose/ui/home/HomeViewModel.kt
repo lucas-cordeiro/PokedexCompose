@@ -10,6 +10,7 @@ import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.usecase.PokemonDetailUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.PokemonLikeUseCase
 import br.com.lucascordeiro.pokedex.domain.usecase.PokemonSearchUseCase
 import br.com.lucascordeiro.pokedex.domain.usecase.SaveSimplePokemonUseCase
 import kotlinx.coroutines.Dispatchers.IO
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
         private val pokemonSearchUseCase: PokemonSearchUseCase,
         private val pokemonDetailUseCase: PokemonDetailUseCase,
+        private val pokemonLikeUseCase: PokemonLikeUseCase,
         private val saveSimplePokemonUseCase: SaveSimplePokemonUseCase
 ) : ViewModel() {
 
@@ -50,7 +52,7 @@ class HomeViewModel(
 
     fun doUpdateLikePokemon(pokemonId: Long, like: Boolean){
         viewModelScope.launch {
-            when(pokemonDetailUseCase.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)){
+            when(pokemonLikeUseCase.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)){
                 is Result.Success -> {
                     _showMessage.value = "${pokemons.find { it.id == pokemonId }?.name} Liked ❤️"
                 }

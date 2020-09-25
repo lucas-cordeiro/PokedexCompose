@@ -9,6 +9,7 @@ import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.usecase.PokemonDetailUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.PokemonLikeUseCase
 import br.com.lucascordeiro.pokedex.domain.usecase.PokemonsListUseCase
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
-class PokemonDetailViewModel(private val useCase: PokemonDetailUseCase) : ViewModel() {
+class PokemonDetailViewModel(
+        private val pokemonDetailUseCase: PokemonDetailUseCase,
+        private val pokemonLikeUseCase: PokemonLikeUseCase
+) : ViewModel() {
 
     private val _errorMessage: MutableStateFlow<String?> = MutableStateFlow(null)
     val errorMessage: StateFlow<String?>
@@ -32,7 +36,7 @@ class PokemonDetailViewModel(private val useCase: PokemonDetailUseCase) : ViewMo
 
     fun doUpdateLikePokemon(pokemonId: Long, like: Boolean){
         viewModelScope.launch {
-            when(useCase.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)){
+            when(pokemonLikeUseCase.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)){
                 is Result.Success -> {
                     _showMessage.value = "${pokemon?.name} Liked ❤️"
                 }
@@ -45,7 +49,7 @@ class PokemonDetailViewModel(private val useCase: PokemonDetailUseCase) : ViewMo
 
     fun getPokemonId(pokemonId: Long) {
         viewModelScope.launch {
-            useCase.doGetPokmeonById(pokemonId = pokemonId)
+            pokemonDetailUseCase.doGetPokmeonById(pokemonId = pokemonId)
                     .flowOn(IO)
                     .collect {
                         when(it){

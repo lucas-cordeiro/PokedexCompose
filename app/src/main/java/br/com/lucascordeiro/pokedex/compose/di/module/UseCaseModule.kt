@@ -7,5 +7,6 @@ val useCaseModule = module {
     single { PokemonListUseCaseImpl(get(), get(), get()) as PokemonsListUseCase }
     single { PokemonDetailUseCaseImpl(get(), get()) as PokemonDetailUseCase }
     single { PokemonSearchUseCaseImpl(get(),get(), get()) as PokemonSearchUseCase}
+    single { PokemonLikeUseCaseImpl(get(),get()) as PokemonLikeUseCase}
     single { SaveSimplePokemonUseCaseImpl(get(),get()) as SaveSimplePokemonUseCase}
 }

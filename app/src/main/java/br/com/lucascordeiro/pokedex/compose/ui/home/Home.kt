@@ -39,6 +39,7 @@ fun Home(
                     return HomeViewModel(
                             PokedexComponent().pokemonSearchUseCase,
                             PokedexComponent().pokemonDetailUseCase,
+                            PokedexComponent().pokemonLikeUseCase,
                             PokedexComponent().saveSimplePokemonUseCase
                     ) as T
                 }
