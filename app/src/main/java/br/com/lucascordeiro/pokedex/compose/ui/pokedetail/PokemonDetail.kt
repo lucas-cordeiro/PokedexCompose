@@ -42,12 +42,13 @@ fun PokemonDetail(
     )
     viewModel.getPokemonId(pokemonId = pokemonBasic.id)
     val pokemon = viewModel.pokemon
+    val pokemonData = if(pokemon?.id == pokemonBasic.id) pokemon else pokemonBasic
     PokemonDetailScreen(
-            pokemon = pokemon ?: pokemonBasic,
+            pokemon = pokemonData,
             updateLike = {
                 viewModel.doUpdateLikePokemon(
-                        pokemonId = pokemonBasic.id,
-                        like = pokemon?.like != true)
+                        pokemonId = pokemonData.id,
+                        like = !pokemonData.like)
             }
     )
 }
