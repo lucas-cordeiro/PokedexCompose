@@ -1,10 +1,17 @@
 package br.com.lucascordeiro.pokedex.compose.ui.pokedex
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FilterAlt
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawOpacity
@@ -76,27 +83,37 @@ fun PokedexScreen(
     updateLike: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val (onFilterMode, setOnFilterMode) = remember { mutableStateOf(false) }
     Scaffold(
-            topBar = {
-                TopBar(
-                    title = "Pokedex",
-                    tint = grassLight,
-                    onBackClick = upPress
-                )
-            }
+        topBar = {
+            TopBar(
+                title = if(onFilterMode) "Filtro" else "Pokedex",
+                tint = grassLight,
+                filter = true,
+                onFilterMode = onFilterMode,
+                setFilterMode = setOnFilterMode,
+                onBackClick = upPress
+            )
+        }
     ) {
         Stack {
-            PokemonCollection(
-                    modifier = modifier,
-                    pokemons = pokemons,
-                    onPokemonSelected = onPokemonSelected,
-                    loadMoreItems = loadMoreItems,
-                    loading = loading,
-                    scrollPosition = scrollPosition,
-                    updateLike = updateLike,
-                    setScrollPosition = setScrollPosition
-            )
-            Loading(loading = loading)
+            Crossfade(current = onFilterMode) {
+                if(it){
+                    Text(text = "Filtros legais")
+                }else{
+                    PokemonCollection(
+                        modifier = modifier,
+                        pokemons = pokemons,
+                        onPokemonSelected = onPokemonSelected,
+                        loadMoreItems = loadMoreItems,
+                        loading = loading,
+                        scrollPosition = scrollPosition,
+                        updateLike = updateLike,
+                        setScrollPosition = setScrollPosition
+                    )
+                    Loading(loading = loading)
+                }
+            }
         }
     }
 }
