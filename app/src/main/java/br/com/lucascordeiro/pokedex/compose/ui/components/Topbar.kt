@@ -9,6 +9,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.FilterAlt
 import androidx.compose.material.icons.rounded.KeyboardBackspace
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,6 +25,9 @@ fun TopBar(
     title: String,
     tint: Color = MaterialTheme.colors.onSurface,
     onBackClick: () -> Unit,
+    filter: Boolean = false,
+    onFilterMode: Boolean = false,
+    setFilterMode: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -32,11 +38,23 @@ fun TopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onBackClick) {
+            IconButton(onClick = {if(onFilterMode) setFilterMode(false) else onBackClick() }) {
                 Icon(
-                    asset = Icons.Rounded.KeyboardBackspace,
-                    tint = tint
+                    asset = if(onFilterMode) Icons.Rounded.Clear else Icons.Rounded.KeyboardBackspace,
+                    tint = if(onFilterMode) MaterialTheme.colors.error else tint
                 )
+            }
+        },
+        actions = {
+            if(filter){
+                IconButton(onClick = {
+                    setFilterMode(!onFilterMode)
+                }) {
+                    Icon(
+                        asset = if(onFilterMode) Icons.Rounded.Done else Icons.Rounded.FilterAlt,
+                        tint = if(onFilterMode) Color.Green else MaterialTheme.colors.onSurface
+                    )
+                }
             }
         },
         modifier = modifier
