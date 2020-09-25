@@ -9,34 +9,34 @@ import br.com.lucascordeiro.pokedex.domain.repository.PokemonSimpleRepository
 import br.com.lucascordeiro.pokedex.domain.utils.TOTAL_POKEMON_COUNT
 import kotlinx.coroutines.flow.*
 
-class PokemonSearchUseCaseImpl(
+class SearchPokemonUseCaseImpl(
         private val pokemonRepository: PokemonRepository,
         private val pokemonSimpleRepository: PokemonSimpleRepository,
         private val errorHandler: ErrorHandler
-) : PokemonSearchUseCase {
-    override suspend fun doPokemonSearchByName(nameQuery: String, limit: Long) = flow {
-        val pokemonsFromNetwork = if(pokemonSimpleRepository.doGetPokemonsIdsFromDatabase(offset = 0, limit = TOTAL_POKEMON_COUNT).first().size < TOTAL_POKEMON_COUNT){
-            pokemonSimpleRepository.doBulkInsertPokemonToDatabase(pokemonRepository.doGetPokemonsFromNetwork(0, TOTAL_POKEMON_COUNT).first().map { pokemon ->  PokemonSimple(
+) : SearchPokemonUseCase {
+    override suspend fun doSearchPokemonByName(nameQuery: String, limit: Long) = flow {
+        val pokemonsFromNetwork = if(pokemonSimpleRepository.getPokemonsIdsFromDatabase(offset = 0, limit = TOTAL_POKEMON_COUNT).first().size < TOTAL_POKEMON_COUNT){
+            pokemonSimpleRepository.bulkInsertPokemonToDatabase(pokemonRepository.getPokemonsFromNetwork(0, TOTAL_POKEMON_COUNT).first().map { pokemon ->  PokemonSimple(
                     id = pokemon.id,
                     name = pokemon.name
             ) })
-            pokemonSimpleRepository.doGetPokemonsFromDatabase(offset = 0, limit = TOTAL_POKEMON_COUNT).first()
+            pokemonSimpleRepository.getPokemonsFromDatabase(offset = 0, limit = TOTAL_POKEMON_COUNT).first()
         }else{
-            pokemonSimpleRepository.doGetPokemonsFromDatabase(offset = 0, limit = TOTAL_POKEMON_COUNT).first()
+            pokemonSimpleRepository.getPokemonsFromDatabase(offset = 0, limit = TOTAL_POKEMON_COUNT).first()
         }
         val pokemonsSearch = pokemonsFromNetwork.filter { it.name.trim().toLowerCase().startsWith(nameQuery.toLowerCase().trim()) }
         val pokemonsIdSearch = (if(pokemonsSearch.size > 4) pokemonsSearch.subList(0,4) else pokemonsSearch).map { it.id }
-        val pokemonsIdFromDatabase = pokemonRepository.doGetPokemonsIdsFromDatabase(offset = 0, limit = TOTAL_POKEMON_COUNT).first()
+        val pokemonsIdFromDatabase = pokemonRepository.getPokemonsIdsFromDatabase(offset = 0, limit = TOTAL_POKEMON_COUNT).first()
         val needPokemonsId = pokemonsIdSearch.filter { !pokemonsIdFromDatabase.contains(it) }
         val pokemonsToDatabase: MutableList<Pokemon> = ArrayList()
         needPokemonsId.forEach {
-            val pokemon = pokemonRepository.doGetPokemonByIdFromNetwork(it).first()
+            val pokemon = pokemonRepository.getPokemonByIdFromNetwork(it).first()
             pokemon?.let {
                 pokemonsToDatabase.add(it)
             }
         }
-        pokemonRepository.doBulkInsertPokemonToDatabase(pokemonsToDatabase)
-        emitAll(pokemonRepository.doSearchByPokemonNameFromDatabase(nameQuery.trim().toLowerCase(), limit))
+        pokemonRepository.bulkInsertPokemonToDatabase(pokemonsToDatabase)
+        emitAll(pokemonRepository.searchPokemonByNameFromDatabase(nameQuery.trim().toLowerCase(), limit))
     }.map {
         val data: Result<List<Pokemon>> = Result.Success(it)
         data

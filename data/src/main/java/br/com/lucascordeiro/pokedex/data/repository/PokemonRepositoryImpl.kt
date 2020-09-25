@@ -9,11 +9,7 @@ import br.com.lucascordeiro.pokedex.data.mapper.pokemon.PokemonMapper
 import br.com.lucascordeiro.pokedex.data.network.service.PokemonApiClient
 import br.com.lucascordeiro.pokedex.data.preferences.PreferenceController
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
-import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
-import br.com.lucascordeiro.pokedex.domain.utils.TOTAL_POKEMON_COUNT
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 
 class PokemonRepositoryImpl(
@@ -24,7 +20,7 @@ class PokemonRepositoryImpl(
     private val preferenceController: PreferenceController
 ) : PokemonRepository {
 
-    override suspend fun doGetPokemonByIdFromDatabase(pokemonId: Long) = pokemonDao.getById(pokemonId).map { pokemonEntity ->
+    override suspend fun getPokemonByIdFromDatabase(pokemonId: Long) = pokemonDao.getById(pokemonId).map { pokemonEntity ->
        if(pokemonEntity!=null){
            val relation =
                    pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId)
@@ -36,13 +32,13 @@ class PokemonRepositoryImpl(
        }else null
     }
 
-    override suspend fun doGetPokemonByIdFromNetwork(pokemonId: Long) = pokemonApiClient.doGetPokemonById(pokemonId).map {
+    override suspend fun getPokemonByIdFromNetwork(pokemonId: Long) = pokemonApiClient.getPokemonById(pokemonId).map {
         pokemonMapper.providePokemonNetworkMapper().map(it?.apply {
             id = pokemonId
         })
     }
 
-    override suspend fun doGetPokemonsFromDatabase(offset: Long, limit: Long) = pokemonDao.getAll(offset = offset, limit = limit).map { pokemons->
+    override suspend fun getPokemonsFromDatabase(offset: Long, limit: Long) = pokemonDao.getAll(offset = offset, limit = limit).map { pokemons->
         pokemons.map { pokemonEntity ->
             val relation =
                 pokemonDao.getPokemonWithTypeEntity(pokemonId = pokemonEntity.pokemonId)
@@ -54,7 +50,7 @@ class PokemonRepositoryImpl(
         }
     }
 
-    override suspend fun doGetPokemonsFromNetwork(offset: Long, limit: Long) = pokemonApiClient.doGetPokemon(offset = offset, limit = limit).map {result->
+    override suspend fun getPokemonsFromNetwork(offset: Long, limit: Long) = pokemonApiClient.getPokemon(offset = offset, limit = limit).map { result->
         result.results?.map {pokemon ->
             pokemonMapper.providePokemonNetworkMapper().map(pokemon.apply {
                 id = url?.toUri()?.lastPathSegment?.toLong()
@@ -62,9 +58,9 @@ class PokemonRepositoryImpl(
         }?: emptyList()
     }
 
-    override suspend fun doGetPokemonsIdsFromDatabase(offset: Long, limit: Long) = flowOf(pokemonDao.getAllIds(offset = offset, limit = limit))
+    override suspend fun getPokemonsIdsFromDatabase(offset: Long, limit: Long) = pokemonDao.getAllIds(offset = offset, limit = limit)
 
-    override suspend fun doInsertPokemonToDatabase(pokemon: Pokemon) {
+    override suspend fun insertPokemonToDatabase(pokemon: Pokemon) {
         pokemonDao.insertAll(listOf(pokemonMapper.providePokemonToPokemonEntityMapper().map(pokemon)))
         pokemon.type.forEach { pokemonType ->
             val type =
@@ -83,7 +79,7 @@ class PokemonRepositoryImpl(
         }
     }
 
-    override suspend fun doSearchByPokemonNameFromDatabase(nameQuery: String, limit: Long) = pokemonDao.queryByName("${nameQuery}%", limit).map { pokemons->
+    override suspend fun searchPokemonByNameFromDatabase(nameQuery: String, limit: Long) = pokemonDao.queryByName("${nameQuery}%", limit).map { pokemons->
         Log.d("BUG","pokemons: $pokemons")
         pokemons.map { pokemonEntity ->
             val relation =
@@ -96,14 +92,14 @@ class PokemonRepositoryImpl(
         }
     }
 
-    override suspend fun doUpdateLikePokemonById(pokemonId: Long, like: Boolean) = pokemonDao.updateLikeByPokemonId(
+    override suspend fun updateLikePokemonById(pokemonId: Long, like: Boolean) = pokemonDao.updateLikeByPokemonId(
             pokemonId = pokemonId,
             like = like
     )
 
-    override suspend fun doBulkInsertPokemonToDatabase(pokemons: List<Pokemon>) {
+    override suspend fun bulkInsertPokemonToDatabase(pokemons: List<Pokemon>) {
         pokemons.forEach { pokemon ->
-            doInsertPokemonToDatabase(pokemon)
+            insertPokemonToDatabase(pokemon)
         }
     }
 }

@@ -7,10 +7,10 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class PokedexComponent : KoinComponent {
-    val pokemonListUseCase: PokemonsListUseCase by inject()
-    val pokemonDetailUseCase: PokemonDetailUseCase by inject()
-    val pokemonSearchUseCase: PokemonSearchUseCase by inject()
-    val pokemonLikeUseCase: PokemonLikeUseCase by inject()
+    val pokemonListUseCaseGet: GetPokemonListUseCase by inject()
+    val getPokemonDetailUseCase: GetPokemonDetailUseCase by inject()
+    val searchPokemonUseCase: SearchPokemonUseCase by inject()
+    val updateLikePokemonUseCase: UpdateLikePokemonUseCase by inject()
     val saveSimplePokemonUseCase: SaveSimplePokemonUseCase by inject()
     val viewModelHome: HomeViewModel by inject()
     val viewModelPokedex: PokedexViewModel by inject()

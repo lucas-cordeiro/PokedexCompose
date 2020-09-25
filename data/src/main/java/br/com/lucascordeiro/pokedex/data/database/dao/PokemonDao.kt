@@ -12,7 +12,7 @@ interface PokemonDao {
     fun getAll(limit: Long, offset: Long): Flow<List<PokemonEntity>>
 
     @Query("SELECT pokemonId FROM pokemon ORDER BY pokemonId LIMIT :limit OFFSET :offset")
-    suspend fun getAllIds(limit: Long, offset: Long): List<Long>
+    fun getAllIds(limit: Long, offset: Long): Flow<List<Long>>
 
     @Query("UPDATE pokemon SET isLike = :like WHERE pokemonId = :pokemonId")
     suspend fun updateLikeByPokemonId(pokemonId: Long, like: Boolean)

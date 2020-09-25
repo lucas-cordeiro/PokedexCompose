@@ -7,7 +7,7 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.flow.flowOf
 
 class PokemonApiClientImpl(private val appHttpClient: AppHttpClient) : PokemonApiClient {
-    override suspend fun doGetPokemon(
+    override suspend fun getPokemon(
         offset: Long,
         limit: Long
     ) = flowOf(appHttpClient.httpClient.get<ResponsePokemonNetwork<PokemonNetwork>>(basePath) {
@@ -15,7 +15,7 @@ class PokemonApiClientImpl(private val appHttpClient: AppHttpClient) : PokemonAp
         parameter("limit", limit)
     })
 
-    override suspend fun doGetPokemonById(id: Long) = flowOf(appHttpClient.httpClient.get<PokemonNetwork>("$basePath/$id"))
+    override suspend fun getPokemonById(id: Long) = flowOf(appHttpClient.httpClient.get<PokemonNetwork>("$basePath/$id"))
 
     override val basePath = "pokemon"
 }

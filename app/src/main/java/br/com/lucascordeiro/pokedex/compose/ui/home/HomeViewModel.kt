@@ -1,6 +1,5 @@
 package br.com.lucascordeiro.pokedex.compose.ui.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,9 +8,9 @@ import androidx.lifecycle.viewModelScope
 import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
-import br.com.lucascordeiro.pokedex.domain.usecase.PokemonDetailUseCase
-import br.com.lucascordeiro.pokedex.domain.usecase.PokemonLikeUseCase
-import br.com.lucascordeiro.pokedex.domain.usecase.PokemonSearchUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonDetailUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.UpdateLikePokemonUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.SearchPokemonUseCase
 import br.com.lucascordeiro.pokedex.domain.usecase.SaveSimplePokemonUseCase
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -19,9 +18,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-        private val pokemonSearchUseCase: PokemonSearchUseCase,
-        private val pokemonDetailUseCase: PokemonDetailUseCase,
-        private val pokemonLikeUseCase: PokemonLikeUseCase,
+        private val searchPokemonUseCase: SearchPokemonUseCase,
+        private val getPokemonDetailUseCase: GetPokemonDetailUseCase,
+        private val updateLikePokemonUseCase: UpdateLikePokemonUseCase,
         private val saveSimplePokemonUseCase: SaveSimplePokemonUseCase
 ) : ViewModel() {
 
@@ -52,7 +51,7 @@ class HomeViewModel(
 
     fun doUpdateLikePokemon(pokemonId: Long, like: Boolean){
         viewModelScope.launch {
-            when(pokemonLikeUseCase.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)){
+            when(updateLikePokemonUseCase.updateLikePokemonById(pokemonId = pokemonId, like = like)){
                 is Result.Success -> {
                     _showMessage.value = "${pokemons.find { it.id == pokemonId }?.name} Liked ❤️"
                 }
@@ -85,8 +84,8 @@ class HomeViewModel(
                         if(this@HomeViewModel.query.isNotBlank()) {
                             loading = true
                             jobSearch = viewModelScope.launch {
-                                pokemonSearchUseCase
-                                        .doPokemonSearchByName(query, limit = 4)
+                                searchPokemonUseCase
+                                        .doSearchPokemonByName(query, limit = 4)
                                         .flowOn(IO)
                                         .collect {
                                             loading = false

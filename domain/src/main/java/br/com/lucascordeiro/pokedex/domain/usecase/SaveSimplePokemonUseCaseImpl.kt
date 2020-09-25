@@ -11,8 +11,8 @@ class SaveSimplePokemonUseCaseImpl(
         private val pokemonSimpleRepository: PokemonSimpleRepository
 ) : SaveSimplePokemonUseCase {
     override suspend fun doSaveSimplePokemon() {
-        if(pokemonSimpleRepository.doGetPokemonsIdsFromDatabase(0, TOTAL_POKEMON_COUNT).first().size < TOTAL_POKEMON_COUNT){
-            pokemonSimpleRepository.doBulkInsertPokemonToDatabase(pokemonRepository.doGetPokemonsFromNetwork(0, TOTAL_POKEMON_COUNT).first().map { pokemon ->  PokemonSimple(
+        if(pokemonSimpleRepository.getPokemonsIdsFromDatabase(0, TOTAL_POKEMON_COUNT).first().size < TOTAL_POKEMON_COUNT){
+            pokemonSimpleRepository.bulkInsertPokemonToDatabase(pokemonRepository.getPokemonsFromNetwork(0, TOTAL_POKEMON_COUNT).first().map { pokemon ->  PokemonSimple(
                     id = pokemon.id,
                     name = pokemon.name
             ) })

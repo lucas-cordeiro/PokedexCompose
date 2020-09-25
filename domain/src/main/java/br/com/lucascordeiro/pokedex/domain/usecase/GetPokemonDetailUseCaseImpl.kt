@@ -6,15 +6,15 @@ import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
 import kotlinx.coroutines.flow.*
 
-class PokemonDetailUseCaseImpl(
+class GetPokemonDetailUseCaseImpl(
         private val pokemonRepository: PokemonRepository,
         private val errorHandler: ErrorHandler
-) : PokemonDetailUseCase {
-    override fun doGetPokmeonById(pokemonId: Long) = flow {
-        pokemonRepository.doGetPokemonByIdFromDatabase(pokemonId).collect { pokemonFromDatabase ->
+) : GetPokemonDetailUseCase {
+    override fun getPokmeonById(pokemonId: Long) = flow {
+        pokemonRepository.getPokemonByIdFromDatabase(pokemonId).collect { pokemonFromDatabase ->
             if (pokemonFromDatabase == null) {
-                pokemonRepository.doGetPokemonByIdFromNetwork(pokemonId).first()?.let { pokemon ->
-                    pokemonRepository.doInsertPokemonToDatabase(pokemon)
+                pokemonRepository.getPokemonByIdFromNetwork(pokemonId).first()?.let { pokemon ->
+                    pokemonRepository.insertPokemonToDatabase(pokemon)
                 }
             } else {
                 emit(pokemonFromDatabase)

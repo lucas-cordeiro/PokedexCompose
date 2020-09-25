@@ -8,9 +8,8 @@ import androidx.lifecycle.viewModelScope
 import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
 import br.com.lucascordeiro.pokedex.domain.model.Result
-import br.com.lucascordeiro.pokedex.domain.usecase.PokemonDetailUseCase
-import br.com.lucascordeiro.pokedex.domain.usecase.PokemonLikeUseCase
-import br.com.lucascordeiro.pokedex.domain.usecase.PokemonsListUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonDetailUseCase
+import br.com.lucascordeiro.pokedex.domain.usecase.UpdateLikePokemonUseCase
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +18,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class PokemonDetailViewModel(
-        private val pokemonDetailUseCase: PokemonDetailUseCase,
-        private val pokemonLikeUseCase: PokemonLikeUseCase
+        private val getPokemonDetailUseCase: GetPokemonDetailUseCase,
+        private val updateLikePokemonUseCase: UpdateLikePokemonUseCase
 ) : ViewModel() {
 
     private val _errorMessage: MutableStateFlow<String?> = MutableStateFlow(null)
@@ -36,7 +35,7 @@ class PokemonDetailViewModel(
 
     fun doUpdateLikePokemon(pokemonId: Long, like: Boolean){
         viewModelScope.launch {
-            when(pokemonLikeUseCase.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)){
+            when(updateLikePokemonUseCase.updateLikePokemonById(pokemonId = pokemonId, like = like)){
                 is Result.Success -> {
                     _showMessage.value = "${pokemon?.name} Liked ❤️"
                 }
@@ -49,7 +48,7 @@ class PokemonDetailViewModel(
 
     fun getPokemonId(pokemonId: Long) {
         viewModelScope.launch {
-            pokemonDetailUseCase.doGetPokmeonById(pokemonId = pokemonId)
+            getPokemonDetailUseCase.getPokmeonById(pokemonId = pokemonId)
                     .flowOn(IO)
                     .collect {
                         when(it){

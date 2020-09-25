@@ -4,13 +4,13 @@ import br.com.lucascordeiro.pokedex.domain.helper.ErrorHandler
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.repository.PokemonRepository
 
-class PokemonLikeUseCaseImpl(
+class UpdateLikePokemonUseCaseImpl(
         private val pokemonRepository: PokemonRepository,
         private val errorHandler: ErrorHandler
-) : PokemonLikeUseCase {
-    override suspend fun doUpdateLikePokemonById(pokemonId: Long, like: Boolean) : Result<Unit> {
+) : UpdateLikePokemonUseCase {
+    override suspend fun updateLikePokemonById(pokemonId: Long, like: Boolean) : Result<Unit> {
         return try{
-            pokemonRepository.doUpdateLikePokemonById(pokemonId = pokemonId, like = like)
+            pokemonRepository.updateLikePokemonById(pokemonId = pokemonId, like = like)
             Result.Success(Unit)
         }catch (t: Throwable){
             t.printStackTrace()

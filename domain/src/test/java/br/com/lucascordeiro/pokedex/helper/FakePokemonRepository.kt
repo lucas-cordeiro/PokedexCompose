@@ -11,32 +11,32 @@ class FakePokemonRepository : PokemonRepository {
         get() = pokemonDatabase
     private val pokemonNetWork = doGetFakeDataNetwork()
 
-    override suspend fun doGetPokemonByIdFromDatabase(pokemonId: Long) =
+    override suspend fun getPokemonByIdFromDatabase(pokemonId: Long) =
             pokemonDatabaseState.map { it.firstOrNull { it.id == pokemonId } }
 
-    override suspend fun doGetPokemonByIdFromNetwork(pokemonId: Long) =
+    override suspend fun getPokemonByIdFromNetwork(pokemonId: Long) =
         flowOf(pokemonNetWork.firstOrNull { it.id == pokemonId })
 
-    override suspend fun doGetPokemonsFromDatabase(offset: Long, limit: Long) = pokemonDatabaseState
+    override suspend fun getPokemonsFromDatabase(offset: Long, limit: Long) = pokemonDatabaseState
 
-    override suspend fun doGetPokemonsFromNetwork(offset: Long, limit: Long) = flowOf(pokemonNetWork)
+    override suspend fun getPokemonsFromNetwork(offset: Long, limit: Long) = flowOf(pokemonNetWork)
 
-    override suspend fun doGetPokemonsIdsFromDatabase(offset: Long, limit: Long) =
+    override suspend fun getPokemonsIdsFromDatabase(offset: Long, limit: Long) =
         flowOf(pokemonDatabaseState.value.map { it.id })
 
-    override suspend fun doInsertPokemonToDatabase(pokemon: Pokemon) {
+    override suspend fun insertPokemonToDatabase(pokemon: Pokemon) {
         val tempList = pokemonDatabase.value.toMutableList()
         tempList.add(pokemon)
         pokemonDatabase.value = tempList
     }
 
-    override suspend fun doBulkInsertPokemonToDatabase(pokemons: List<Pokemon>) {
+    override suspend fun bulkInsertPokemonToDatabase(pokemons: List<Pokemon>) {
         val tempList = pokemonDatabase.value.toMutableList()
         tempList.addAll(pokemons)
         pokemonDatabase.value = tempList
     }
 
-    override suspend fun doUpdateLikePokemonById(pokemonId: Long, like: Boolean) {
+    override suspend fun updateLikePokemonById(pokemonId: Long, like: Boolean) {
         val tempList = pokemonDatabase.value.toMutableList()
         tempList[tempList.indexOfFirst { it.id == pokemonId }].like = like
         pokemonDatabase.value =tempList

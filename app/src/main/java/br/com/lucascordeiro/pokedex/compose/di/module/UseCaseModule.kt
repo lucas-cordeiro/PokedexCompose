@@ -4,9 +4,9 @@ import br.com.lucascordeiro.pokedex.domain.usecase.*
 import org.koin.dsl.module
 
 val useCaseModule = module {
-    single { PokemonListUseCaseImpl(get(), get(), get()) as PokemonsListUseCase }
-    single { PokemonDetailUseCaseImpl(get(), get()) as PokemonDetailUseCase }
-    single { PokemonSearchUseCaseImpl(get(),get(), get()) as PokemonSearchUseCase}
-    single { PokemonLikeUseCaseImpl(get(),get()) as PokemonLikeUseCase}
+    single { GetPokemonListUseCaseImpl(get(), get(), get()) as GetPokemonListUseCase }
+    single { GetPokemonDetailUseCaseImpl(get(), get()) as GetPokemonDetailUseCase }
+    single { SearchPokemonUseCaseImpl(get(),get(), get()) as SearchPokemonUseCase}
+    single { UpdateLikePokemonUseCaseImpl(get(),get()) as UpdateLikePokemonUseCase}
     single { SaveSimplePokemonUseCaseImpl(get(),get()) as SaveSimplePokemonUseCase}
 }

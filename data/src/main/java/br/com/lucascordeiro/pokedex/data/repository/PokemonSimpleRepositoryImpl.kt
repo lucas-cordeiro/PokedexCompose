@@ -12,18 +12,18 @@ class PokemonSimpleRepositoryImpl(
         private val pokemonSimpleMapper: PokemonSimpleMapper,
         private val pokemonSimpleDao: PokemonSimpleDao
 ) : PokemonSimpleRepository {
-    override suspend fun doBulkInsertPokemonToDatabase(pokemons: List<PokemonSimple>) = pokemonSimpleDao.insertAll(pokemons.map { pokemonSimpleMapper.providePokemonToPokemonEntityMapper().map(it) })
+    override suspend fun bulkInsertPokemonToDatabase(pokemons: List<PokemonSimple>) = pokemonSimpleDao.insertAll(pokemons.map { pokemonSimpleMapper.providePokemonToPokemonEntityMapper().map(it) })
 
-    override suspend fun doGetPokemonsFromDatabase(offset: Long, limit: Long) = pokemonSimpleDao.getAll(offset = offset, limit = limit)
+    override suspend fun getPokemonsFromDatabase(offset: Long, limit: Long) = pokemonSimpleDao.getAll(offset = offset, limit = limit)
             .map { pokemons ->
                 pokemons.map { pokemon ->
                     pokemonSimpleMapper.providePokemonEntityToPokemonMapper().map(pokemon)!!
                 }
             }
 
-    override suspend fun doGetPokemonsIdsFromDatabase(offset: Long, limit: Long) =  flowOf(pokemonSimpleDao.getAllIds(offset = offset, limit = limit))
+    override suspend fun getPokemonsIdsFromDatabase(offset: Long, limit: Long) =  flowOf(pokemonSimpleDao.getAllIds(offset = offset, limit = limit))
 
-    override suspend fun doInsertPokemonToDatabase(pokemon: PokemonSimple) {
+    override suspend fun insertPokemonToDatabase(pokemon: PokemonSimple) {
         pokemonSimpleDao.insert(pokemonSimpleMapper.providePokemonToPokemonEntityMapper().map(pokemon))
     }
 }

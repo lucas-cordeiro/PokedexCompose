@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -18,9 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.ui.tooling.preview.Preview
 import br.com.lucascordeiro.pokedex.compose.di.component.PokedexComponent
 import br.com.lucascordeiro.pokedex.compose.ui.components.StaggeredVerticalGrid
-import br.com.lucascordeiro.pokedex.compose.ui.pokedetail.PokemonDetailViewModel
 import br.com.lucascordeiro.pokedex.compose.ui.theme.*
-import androidx.compose.runtime.getValue
 import br.com.lucascordeiro.pokedex.compose.ui.components.AnimatingLoading
 import br.com.lucascordeiro.pokedex.compose.ui.components.PokemonCollection
 import br.com.lucascordeiro.pokedex.compose.ui.components.SearchField
@@ -37,9 +32,9 @@ fun Home(
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                     return HomeViewModel(
-                            PokedexComponent().pokemonSearchUseCase,
-                            PokedexComponent().pokemonDetailUseCase,
-                            PokedexComponent().pokemonLikeUseCase,
+                            PokedexComponent().searchPokemonUseCase,
+                            PokedexComponent().getPokemonDetailUseCase,
+                            PokedexComponent().updateLikePokemonUseCase,
                             PokedexComponent().saveSimplePokemonUseCase
                     ) as T
                 }
