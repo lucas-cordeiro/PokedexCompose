@@ -27,7 +27,9 @@ fun TopBar(
     onBackClick: () -> Unit,
     filter: Boolean = false,
     onFilterMode: Boolean = false,
-    setFilterMode: (Boolean) -> Unit = {},
+    applyFilter: () -> Unit = {},
+    cancelFilter: () -> Unit = {},
+    openFilter: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -38,7 +40,7 @@ fun TopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = {if(onFilterMode) setFilterMode(false) else onBackClick() }) {
+            IconButton(onClick = {if(onFilterMode) cancelFilter() else onBackClick() }) {
                 Icon(
                     asset = if(onFilterMode) Icons.Rounded.Clear else Icons.Rounded.KeyboardBackspace,
                     tint = if(onFilterMode) MaterialTheme.colors.error else tint
@@ -48,7 +50,11 @@ fun TopBar(
         actions = {
             if(filter){
                 IconButton(onClick = {
-                    setFilterMode(!onFilterMode)
+                    if(onFilterMode){
+                        applyFilter()
+                    }else{
+                        openFilter()
+                    }
                 }) {
                     Icon(
                         asset = if(onFilterMode) Icons.Rounded.Done else Icons.Rounded.FilterAlt,

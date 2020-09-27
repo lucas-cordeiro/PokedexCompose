@@ -25,6 +25,7 @@ import kotlin.math.ceil
 fun PokemonCollection(
     onPokemonSelected: (Pokemon) -> Unit,
     scrollPosition: () -> Float,
+    scrollState: ScrollState? = null,
     setScrollPosition: (Float) -> Unit,
     pokemons: List<Pokemon>,
     loadMoreItems: () -> Unit,
@@ -32,12 +33,13 @@ fun PokemonCollection(
     loading: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberScrollState()
+    val listScrollState = scrollState?:rememberScrollState()
 
-    scrollState.scrollTo(scrollPosition())
+
+    listScrollState.scrollTo(scrollPosition())
 
     ScrollableColumn(
-            scrollState = scrollState,
+            scrollState = listScrollState,
             modifier = modifier.fillMaxSize()
     ) {
         StaggeredVerticalGrid(
@@ -46,7 +48,7 @@ fun PokemonCollection(
         ) {
             pokemons.forEach { pokemon ->
                 PokemonItem(
-                        scrollState = scrollState,
+                        scrollState = listScrollState,
                         setPosition = setScrollPosition,
                         onPokemonSelected = onPokemonSelected,
                         modifier = Modifier,
@@ -56,28 +58,29 @@ fun PokemonCollection(
             }
         }
 
-        Button(
-                onClick = {
-                    setScrollPosition(scrollState.value)
-                    loadMoreItems()
-                },
-                modifier = Modifier
-                        .padding(0.dp, 8.dp)
-                        .drawOpacity(if (loading) 0f else 1f),
-                backgroundColor = MaterialTheme.colors.background
-        ) {
-            Text(
-                    text = "Carregar mais",
-                    style = TextStyle(
-                            color = MaterialTheme.colors.primary,
-                            fontWeight = FontWeight.Bold
-                    ),
-                    textAlign = TextAlign.Center,
+        if (!loading) {
+            Button(
+                    onClick = {
+                        setScrollPosition(listScrollState.value)
+                        loadMoreItems()
+                    },
                     modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .padding(4.dp)
+                            .padding(0.dp, 8.dp),
+                    backgroundColor = MaterialTheme.colors.background
+            ) {
+                Text(
+                        text = "Carregar mais",
+                        style = TextStyle(
+                                color = MaterialTheme.colors.primary,
+                                fontWeight = FontWeight.Bold
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                                .fillMaxWidth(1f)
+                                .padding(4.dp)
 
-            )
+                )
+            }
         }
     }
 }

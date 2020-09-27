@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.lucascordeiro.pokedex.domain.model.ErrorEntity
 import br.com.lucascordeiro.pokedex.domain.model.Pokemon
+import br.com.lucascordeiro.pokedex.domain.model.PokemonType
 import br.com.lucascordeiro.pokedex.domain.model.Result
 import br.com.lucascordeiro.pokedex.domain.usecase.GetPokemonDetailUseCase
 import br.com.lucascordeiro.pokedex.domain.usecase.UpdateLikePokemonUseCase
@@ -27,6 +28,11 @@ class PokedexViewModel(
 
     private var currentLimit = DEFAULT_LIMIT
     private var currentJob: Job? = null
+
+    var typesChips: List<Pair<PokemonType,Boolean>> by mutableStateOf(generateTypeChips())
+        private set
+
+    private fun generateTypeChips() =  PokemonType.values().map { Pair(it, false) }
 
     var pokemons: List<Pokemon> by mutableStateOf(listOf())
         private set
@@ -62,7 +68,17 @@ class PokedexViewModel(
         }
     }
 
-    fun doUpdateLikePokemon(pokemonId: Long, like: Boolean){
+    fun updateTypeChip(typeChip: Pair<PokemonType,Boolean>){
+        val tempTypesChips = typesChips.toMutableList()
+        tempTypesChips[tempTypesChips.indexOf(typeChip)] = Pair(typeChip.first, !typeChip.second)
+        typesChips = tempTypesChips
+    }
+
+    fun resetTypesChips(){
+        typesChips = generateTypeChips()
+    }
+
+    fun updateLikePokemon(pokemonId: Long, like: Boolean){
         viewModelScope.launch {
             when(updateLikePokemonUseCase.updateLikePokemonById(pokemonId = pokemonId, like = like)){
                 is Result.Success -> {
