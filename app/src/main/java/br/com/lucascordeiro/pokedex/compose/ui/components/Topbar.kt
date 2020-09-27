@@ -43,7 +43,7 @@ fun TopBar(
             IconButton(onClick = {if(onFilterMode) cancelFilter() else onBackClick() }) {
                 Icon(
                     asset = if(onFilterMode) Icons.Rounded.Clear else Icons.Rounded.KeyboardBackspace,
-                    tint = if(onFilterMode) MaterialTheme.colors.error else tint
+                    tint = if(onFilterMode) MaterialTheme.colors.onSurface.copy(alpha = 0.3f) else tint
                 )
             }
         },
@@ -58,7 +58,7 @@ fun TopBar(
                 }) {
                     Icon(
                         asset = if(onFilterMode) Icons.Rounded.Done else Icons.Rounded.FilterAlt,
-                        tint = if(onFilterMode) Color.Green else MaterialTheme.colors.onSurface
+                        tint = if(onFilterMode) Color.Green else tint
                     )
                 }
             }

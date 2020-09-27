@@ -11,6 +11,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Backspace
 import androidx.compose.material.icons.rounded.ClearAll
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -76,6 +77,7 @@ fun Pokedex(
             },
             updateTypeChip = { viewModel.updateTypeChip(it) },
             typesChips = viewModel.typesChips,
+            scrollState = rememberScrollState(),
             resetTypeChips = { viewModel.resetTypesChips() }
     )
 }
@@ -84,6 +86,7 @@ fun Pokedex(
 fun PokedexScreen(
     onPokemonSelected: (Pokemon) -> Unit,
     scrollPosition: () -> Float,
+    scrollState: ScrollState,
     setScrollPosition: (Float) -> Unit,
     pokemons: List<Pokemon>,
     typesChips: List<Pair<PokemonType,Boolean>>,
@@ -96,7 +99,6 @@ fun PokedexScreen(
     modifier: Modifier = Modifier
 ) {
     val (pokedexState, setPokedexState) = remember { mutableStateOf<PokedexState>(PokedexState.PokemonList) }
-    val scrollState = rememberScrollState()
     Scaffold(
         topBar = {
             TopBar(
@@ -118,13 +120,16 @@ fun PokedexScreen(
                         setScrollPosition(scrollState.value)
                         setPokedexState(PokedexState.Filter)
                     },
-                    onBackClick = upPress
+                    onBackClick = {
+                        setScrollPosition(scrollState.value)
+                        upPress()
+                    }
             )
         }
     ) {
         Stack {
-            Crossfade(current = pokedexState) {
-                when(pokedexState){
+            Crossfade(current = pokedexState) {destination ->
+                when(destination){
                     is PokedexState.Filter -> {
                         PokedexFilter(
                                 modifier = Modifier.fillMaxSize(),
@@ -210,7 +215,7 @@ fun PokedexFilter(
             )
             if (typesChipsChecked > 0)
             Icon(
-                    asset = Icons.Rounded.Backspace,
+                    asset = Icons.Rounded.Delete,
                     tint = MaterialTheme.colors.error,
                     modifier = Modifier
                             .padding(
@@ -267,9 +272,9 @@ fun PokemonTypeChip(
             color = grey800.copy(alpha = if (MaterialTheme.colors.isLight) 0.1f else 0.4f)
     ) {
         Text(
-                modifier = Modifier.padding(14.dp, 4.dp),
+                modifier = Modifier.padding(16.dp, 6.dp),
                 text = type,
-                fontSize = TextUnit.Sp(14),
+                fontSize = TextUnit.Sp(16),
                 fontWeight = FontWeight.Normal,
                 color = textColor
         )
@@ -304,6 +309,7 @@ fun PreviewPokedexScreen() {
                     onPokemonSelected = {},
                     loading = true,
                     updateTypeChip = {},
+                    scrollState = rememberScrollState(),
                     typesChips = emptyList(),
                     resetTypeChips = {},
                     scrollPosition = { 1f },
