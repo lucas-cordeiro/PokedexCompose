@@ -1,5 +1,7 @@
 package br.com.lucascordeiro.pokedex.compose.ui.components
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -9,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Layout
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawOpacity
+import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,8 +38,14 @@ fun PokemonCollection(
 ) {
     val listScrollState = scrollState?:rememberScrollState()
 
+    onActive{
+        listScrollState.scrollTo(scrollPosition())
+        Log.d("BUG", "onActive List: pokemons: ${pokemons.size}")
+    }
 
-    listScrollState.scrollTo(scrollPosition())
+    onCommit(callback = {
+        Log.d("BUG", "onCommit List: pokemons: ${pokemons.size}")
+    })
 
     ScrollableColumn(
             scrollState = listScrollState,

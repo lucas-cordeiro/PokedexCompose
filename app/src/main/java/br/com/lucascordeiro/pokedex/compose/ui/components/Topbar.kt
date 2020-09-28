@@ -36,7 +36,7 @@ fun TopBar(
         title = {
             Text(
                 text = title,
-                color = tint
+                color = if(onFilterMode) MaterialTheme.colors.onSurface else tint
             )
         },
         navigationIcon = {
@@ -58,7 +58,7 @@ fun TopBar(
                 }) {
                     Icon(
                         asset = if(onFilterMode) Icons.Rounded.Done else Icons.Rounded.FilterAlt,
-                        tint = if(onFilterMode) Color.Green else tint
+                        tint = if(onFilterMode) MaterialTheme.colors.onSurface else tint
                     )
                 }
             }

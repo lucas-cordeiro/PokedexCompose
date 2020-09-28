@@ -29,10 +29,10 @@ class PokedexViewModel(
     private var currentLimit = DEFAULT_LIMIT
     private var currentJob: Job? = null
 
-    var typesChips: List<Pair<PokemonType,Boolean>> by mutableStateOf(generateTypeChips())
+    var typesChips: List<TypeChip> by mutableStateOf(generateTypeChips())
         private set
 
-    private fun generateTypeChips() =  PokemonType.values().map { Pair(it, false) }
+    private fun generateTypeChips() =  PokemonType.values().map { TypeChip(it, false) }
 
     var pokemons: List<Pokemon> by mutableStateOf(listOf())
         private set
@@ -68,10 +68,8 @@ class PokedexViewModel(
         }
     }
 
-    fun updateTypeChip(typeChip: Pair<PokemonType,Boolean>){
-        val tempTypesChips = typesChips.toMutableList()
-        tempTypesChips[tempTypesChips.indexOf(typeChip)] = Pair(typeChip.first, !typeChip.second)
-        typesChips = tempTypesChips
+    fun updateTypeChip(typeChip: TypeChip){
+        typesChips[typesChips.indexOf(typeChip)].checked = !typeChip.checked
     }
 
     fun resetTypesChips(){

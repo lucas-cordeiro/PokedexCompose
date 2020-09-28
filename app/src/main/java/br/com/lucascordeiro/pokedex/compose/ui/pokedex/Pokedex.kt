@@ -1,5 +1,6 @@
 package br.com.lucascordeiro.pokedex.compose.ui.pokedex
 
+import android.util.Log
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -9,12 +10,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Backspace
-import androidx.compose.material.icons.rounded.ClearAll
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -84,53 +81,53 @@ fun Pokedex(
 
 @Composable
 fun PokedexScreen(
-    onPokemonSelected: (Pokemon) -> Unit,
-    scrollPosition: () -> Float,
-    scrollState: ScrollState,
-    setScrollPosition: (Float) -> Unit,
-    pokemons: List<Pokemon>,
-    typesChips: List<Pair<PokemonType,Boolean>>,
-    updateTypeChip: (Pair<PokemonType,Boolean>) -> Unit,
-    resetTypeChips: () -> Unit,
-    upPress: () -> Unit,
-    loadMoreItems: () -> Unit,
-    loading: Boolean,
-    updateLike: (Long, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+        onPokemonSelected: (Pokemon) -> Unit,
+        scrollPosition: () -> Float,
+        scrollState: ScrollState,
+        setScrollPosition: (Float) -> Unit,
+        pokemons: List<Pokemon>,
+        typesChips: List<TypeChip>,
+        updateTypeChip: (TypeChip) -> Unit,
+        resetTypeChips: () -> Unit,
+        upPress: () -> Unit,
+        loadMoreItems: () -> Unit,
+        loading: Boolean,
+        updateLike: (Long, Boolean) -> Unit,
+        modifier: Modifier = Modifier
 ) {
-    val (pokedexState, setPokedexState) = remember { mutableStateOf<PokedexState>(PokedexState.PokemonList) }
+    val (pokedexState, setPokedexState) = remember { mutableStateOf<PokedexMode>(PokedexMode.PokemonList) }
     Scaffold(
         topBar = {
             TopBar(
                     title = when (pokedexState) {
-                        is PokedexState.PokemonList -> "Pokedex"
-                        is PokedexState.Filter -> "Filter"
+                        is PokedexMode.PokemonList -> "Pokedex"
+                        is PokedexMode.Filter -> "Filter"
                     },
                     tint = grassLight,
                     filter = true,
-                    onFilterMode = pokedexState == PokedexState.Filter,
+                    onFilterMode = pokedexState == PokedexMode.Filter,
                     applyFilter = {
-                        setPokedexState(PokedexState.PokemonList)
+                        setPokedexState(PokedexMode.PokemonList)
                     },
                     cancelFilter = {
                         resetTypeChips()
-                        setPokedexState(PokedexState.PokemonList)
+                        setPokedexState(PokedexMode.PokemonList)
                     },
                     openFilter = {
                         setScrollPosition(scrollState.value)
-                        setPokedexState(PokedexState.Filter)
+                        setPokedexState(PokedexMode.Filter)
                     },
                     onBackClick = {
                         setScrollPosition(scrollState.value)
                         upPress()
                     }
             )
-        }
+        },
     ) {
         Stack {
-            Crossfade(current = pokedexState) {destination ->
+            Crossfade(current = pokedexState) { destination ->
                 when(destination){
-                    is PokedexState.Filter -> {
+                    is PokedexMode.Filter -> {
                         PokedexFilter(
                                 modifier = Modifier.fillMaxSize(),
                                 typesChips = typesChips,
@@ -138,7 +135,8 @@ fun PokedexScreen(
                                 resetTypeChips = resetTypeChips
                         )
                     }
-                    is PokedexState.PokemonList -> {
+                    is PokedexMode.PokemonList -> {
+                        Log.d("BUG","PokemonList")
                         PokemonCollection(
                                 modifier = modifier,
                                 pokemons = pokemons,
@@ -188,12 +186,12 @@ fun Loading(
 
 @Composable
 fun PokedexFilter(
-        typesChips: List<Pair<PokemonType,Boolean>>,
-        updateTypeChip: (Pair<PokemonType,Boolean>) -> Unit,
+        typesChips: List<TypeChip>,
+        updateTypeChip: (TypeChip) -> Unit,
         resetTypeChips: () -> Unit,
         modifier: Modifier = Modifier
 ) {
-    val typesChipsChecked = typesChips.count { it.second }
+    val typesChipsChecked = typesChips.count { it.checked }
     Column(
             modifier = modifier.padding(10.dp)
     ) {
@@ -240,8 +238,8 @@ fun PokedexFilter(
                     rows = 5
             ) {
                 typesChips.forEach { typeChip ->
-                    val type = typeChip.first
-                    val checked = typeChip.second
+                    val type = typeChip.pokemonType
+                    val checked = typeChip.checked
                     val typeTheme = remember(type) { type.toPokemonTypeTheme() }
                     PokemonTypeChip(
                             type = type.type.capitalize(Locale.getDefault()),
